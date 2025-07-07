@@ -1,0 +1,31 @@
+#╒ ▸ 𜶋 𜵧 ═╾
+#╘══════╡🬥 𜵥𜶤 ⬤ ▟▛ 𜵏 𜵏 ◥▞:
+#
+#	 ᒭ ᘍ ᔵ ᗑ ᐞ ∏ ᐐ ᒶ
+#	 ᘍ ᗑ ⊔ ᒶ ᐐ ᒭ ᘎ ᔵ
+#
+#	 ᑢ ᘎ ∏ ᖷ ᐞ ᕌ
+#	 ᐳ ~/.config/ghostty/config
+#╼═╡ᖷ ᗐ ᔭ╞══════════════════════════╛
+
+#╒╡ᕌ ᘍ ᖽ ᘍ ᔸ ᐐ ᘂ╞┅ᐧ
+#╰───────────────────────────────────────────────────────────────────────╮
+	cursor-style			=bar
+	window-inherit-font-size	=true
+#	╰────────────────────────────────────────────────────────────────╯
+
+#╒╡ᒭ ᕼ ᘍ ᗑ ᘍ╞┅ᐧ
+#╰───────────────────────────────────────────────────────────────────────╮
+	theme			=/home/fwz/dotfiles/assets/themes/ghostty_fwz
+	font-family		="DepartureMono Nerd Font Mono"
+	background-opacity	=1
+	window-decoration	=none
+	window-padding-x	=10
+	window-padding-y	=10
+#	╰────────────────────────────────────────────────────────────────╯
+
+#╒╡ᖼ ᘍ ⋋ ᗱ ᐞ ∏ ᕥ ᔖ╞┅ᐧ
+#╰───────────────────────────────────────────────────────────────────────╮
+	keybind		=performable:ctrl+c=copy_to_clipboard
+	keybind		=performable:ctrl+v=paste_from_clipboard
+#	╰────────────────────────────────────────────────────────────────╯

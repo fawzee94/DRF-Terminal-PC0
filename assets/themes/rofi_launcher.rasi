@@ -1,0 +1,303 @@
+/*
+╒ ▸ 𜶋 𜵧 ═╾
+╘══════╡𜶋 ⬤ 𜵧 ◆:
+
+	ᔵ ᘎ ᖷ ᐞ
+	ᒭ ᕼ ᘍ ᗑ ᘍ
+	
+	ᔵ ᐐ ᔖ ᐞ
+	ᐳ ~/dotfile/assets/themes/rofi_launcher.rasi
+╼═╡ᖷ ᗐ ᔭ╞════════════════════════════════════════════╛
+*/
+* {
+/*
+╒╡ᕌ ᒶ ᘎ ᗱ ᐐ ᒶ   ᑶ ᔵ ᘎ ᑶ ᘍ ᔵ ᒭ ᐞ ᘍ ᔖ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+	background		:#282828E6;
+	background-main		:#0000004D;
+	background-alt		:#444444FF;
+	background2		:#5e5c64FF;
+	foreground		:#FFFFFFFF;
+	selected		:#87af5fFF;
+	active			:#87af5fFF;
+	urgent			:#ffaf5fFF;
+	font			:"Nothing Font (5x7) 10";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+configuration {
+	modi			:"drun,window,commands,filebrowser";
+	show-icons		:true;
+	display-drun		:"";
+	display-commands	:"";
+	display-filebrowser	:"";
+	display-window		:"";
+	drun-display-format	:"{name}";
+	window-format		:"{w} · {c} · {t}";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+
+/*
+╒╡ᗑ ᐐ ᐞ ∏   ᗐ ᐞ ∏ ᕥ ᘎ ᗐ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+window {
+	/* properties for window widget */
+	transparency		:"real";
+	location		:center;
+	anchor			:center;
+	fullscreen		:true;
+	padding			:18px 15px 0px 1610px;
+	width			:300px;
+	height			:700px;
+	x-offset		:0px;
+	y-offset		:0px;
+
+   	 /* properties for all widgets */
+	enabled			:true;
+	border			:0px solid;
+	border-radius		:0px;
+	border-color		:@selected;
+	cursor			:"default";
+	background-color	:@background-main;
+	click-to-exit		:true;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᗑ ᐐ ᐞ ∏   ᗱ ᘎ ᙮╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+mainbox {
+	enabled			:true;
+	spacing			:0px;
+	background-color	:transparent;
+	orientation		:vertical;
+	children		:[ "inputbar", "listbox" ];
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᒶ ᐞ ᔖ ᒭ   ᗱ ᘎ ᙮╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+listbox {
+	spacing			:20px;
+	padding			:5px;
+	background-color	:transparent;
+	orientation		:vertical;
+	children		:[ "listview", "message" ];
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᐞ ∏ ᑶ ⊔ ᒭ ᗱ ᐐ ᔵ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+inputbar {
+	enabled			:true;
+	spacing			:10px;
+	padding			:10px 0px 10px 0px;
+	border			:0px solid;
+	//background-image	:linear-gradient(90deg,#87af5fFF,#282828E6); padding: 2em;
+	border-radius		:16px;
+	border-color		:@selected;
+	background-color	:transparent;
+	text-color		:@foreground;
+	orientation		:vertical;
+	children		:[ "entry", "dummy", "mode-switcher" ];
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+entry {
+	enabled			:true;
+	expand			:false;
+	width			:250px;
+	padding			:12px 16px;
+	border			:1px solid;
+	border-radius		:100%;
+	border-color		:@selected;
+	background-color	:@background;
+	text-color		:inherit;
+	blink			:false;
+	cursor-width: 0px;
+	cursor-color: transparent;
+	hide-cursor-on-empty: true;
+	placeholder		:"";
+	placeholder-color	:@foreground;
+	font			:"Nothing Font (5x7) 16";
+	horizontal-align: 0.5;
+	vertical-align: 0.5;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+dummy {
+	expand			:true;
+	background-color	:transparent;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᗑ ᘎ ᕥ ᘍ   ᔖ ᗐ ᐞ ᒭ ᑢ ᕼ ᘍ ᔵ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+mode-switcher{
+	enabled			:true;
+	spacing			:5px;
+	background-color	:transparent;
+	text-color		:@foreground;
+	padding			:3px 20px 3px 20px;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+button {
+	width			:50px;
+	margin			:0px 0px 0px 0px;
+	padding			:0px 5px 0px 0px;
+	border			:1px solid;
+	border-radius		:100%;
+	border-color		:@selected;
+	background-color	:@background;
+	text-color		:inherit;
+	cursor			:pointer;
+	font			:"Nothing Font (5x7) 14";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+button selected {
+	background-color	:@background-alt;
+	text-color:		@selected;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᒶ ᐞ ᔖ ᒭ ᕓ ᐞ ᘍ ᗐ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+listview {
+	enabled			:true;
+	columns			:1;
+	lines			:5;
+	cycle			:true;
+	dynamic			:true;
+	scrollbar		:false;
+	layout			:vertical;
+	reverse			:false;
+	fixed-height		:true;
+	fixed-columns		:true;
+    
+	spacing			:10px;
+	padding			:4px 10px 0px 10px;
+	background-color	:transparent;
+	text-color		:@foreground;
+	cursor			:"default";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᘍ ᒶ ᘍ ᗑ ᘍ ∏ ᒭ ᔖ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+element {
+	enabled			:true;
+	spacing			:10px;
+	padding			:4px;
+	border			:1px solid;
+	border-color		:@selected;
+	border-radius		:100%;
+	background-color	:@background;
+	text-color		:@foreground;
+	cursor			:pointer;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element normal.normal {
+	background-color	:@background;
+	text-color		:inherit;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element normal.urgent {
+	background-color	:@urgent;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element normal.active {
+	background-color	:@active;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element selected.normal {
+	background-color	:@background-alt;
+	text-color		:@selected;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element selected.urgent {
+	background-color	:@urgent;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element selected.active {
+	background-color	:@urgent;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element-icon {
+	background-color	:transparent;
+	text-color		:inherit;
+	size			:32px;
+	cursor			:inherit;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element-text {
+	background-color	:transparent;
+	text-color		:inherit;
+	cursor			:inherit;
+	vertical-align		:0.5;
+	horizontal-align	:0.0;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᗑ ᘍ ᔖ ᔖ ᐐ ᕌ ᘍ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+message {
+	background-color	:transparent;
+	border			:1px solid;
+	border-color		:@background2;
+	border-radius		:100%;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+textbox {
+	padding			:12px;
+	border-radius		:100%;
+	background-color	:@background;
+	text-color		:@foreground;
+	vertical-align		:0.5;
+	horizontal-align	:0.0;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+error-message {
+	padding			:12px;
+	border-radius		:20px;
+	background-color	:@background;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/

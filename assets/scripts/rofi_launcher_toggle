@@ -1,0 +1,2 @@
+niri msg action do-screen-transition --delay-ms 80
+pkill rofi || rofi -show drun -config "~/dotfiles/rofi/launcher.rasi"

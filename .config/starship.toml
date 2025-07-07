@@ -1,0 +1,54 @@
+#╒ ▸ 𜶋 𜵧 ═╾
+#╘══════╡▟▛ 𜵏 🭊 𜶋 ▟▛ 𜵥𜶤 ◆ 𜴗:
+#
+#	 ᑢ ⊔ ᔖ ᒭ ᘎ ᗑ
+#	 ᑶ ᔵ ᘎ ᗑ ᑶ ᒭ 
+#
+#	 ᒭ ᘎ ᗑ ᒶ
+#	 ᐳ ~/.config/starship.toml
+#╼═╡ᖷ ᗐ ᔭ╞═════════════════════════╛
+
+#╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+#╰───────────────────────────────────────────────────────────────────────╮
+	"$schema"	='https://starship.rs/config-schema.json'
+
+	format		="""[](#5e5c64)$time[](bg:#87af5f fg:#5e5c64)$username$hostname[](bg:#5e5c64 fg:#87af5f)$directory[](#5e5c64) $cmd_duration\n$character"""
+#	╰────────────────────────────────────────────────────────────────╯
+
+#╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+#╰───────────────────────────────────────────────────────────────────────╮
+[hostname]
+	ssh_only		=false
+	style			="fg:#282828 bg:#87af5f"
+	format			='[󰁥 $hostname ]($style)'
+	trim_at			='.companyname.com'
+	disabled		=false
+#	╰────────────────────────────────────────────────────────────────╯
+[username]
+	show_always		=true
+	style_user		="bg:#87af5f fg:#282828"
+	style_root		="bg:#87af5f fg:#282828"
+	format			='[  $user ]($style)'
+#	╰────────────────────────────────────────────────────────────────╯
+[directory]
+	style			="fg:#eeeeee bg:#5e5c64"
+	format			="[  $path ]($style)"
+	truncation_length	=3
+	truncation_symbol	="…/"
+#	╰────────────────────────────────────────────────────────────────╯
+[time]
+	disabled		=false
+	time_format		="%R" # Hour:Minute Format
+	style			="bg:#5e5c64"
+	format			='[[  $time ](fg:#eeeeee bg:#5e5c64)]($style)'
+#	╰────────────────────────────────────────────────────────────────╯
+[character]
+	format			="""[╰─$symbol](fg:current_line) """
+	success_symbol		='[](fg:#87af5f)'
+	error_symbol		='[](fg:bold red)'
+#	╰────────────────────────────────────────────────────────────────╯
+[cmd_duration]
+	min_time		=0
+	show_milliseconds	=true
+	format			='[󰜷$duration](#5e5c64)'
+#	╰────────────────────────────────────────────────────────────────╯

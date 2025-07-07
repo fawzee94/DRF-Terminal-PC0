@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+swww img ~/dotfiles/assets/wallpapers/wall.png &
+waybar &
+sleep 0.5
+nm-applet &
+sleep 0.5
+blueman-applet &
+sleep 0.5
+pasystray &
+sleep 0.2
+wl-paste --watch cliphist store &
+sleep 0.2
+waypaper --random &
+sleep 0.2
+while true; do sleep 300; waypaper --random; done

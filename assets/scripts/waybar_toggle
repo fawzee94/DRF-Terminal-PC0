@@ -1,0 +1,2 @@
+niri msg action do-screen-transition  --delay-ms 80
+pkill -SIGUSR1 waybar

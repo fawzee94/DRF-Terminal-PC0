@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# Define main menu options and submenus
+Commands=(
+	"Niri|Niri_Actions"
+	"Waybar|Waybar_Signals"
+	"Systemd|Systemd_Services"
+)
+
+Niri_Actions=(
+	"..|Commands"
+	"Toggle debug output damage|niri msg action do-screen-transition ; niri msg action debug-toggle-damage"
+	"Toggle debug opaque regions|niri msg action do-screen-transition ; niri msg action  debug-toggle-opaque-regions"
+	"Toggle debug tint|niri msg action do-screen-transition ; niri msg action toggle-debug-tint"
+	"Screenshot window|niri msg action screenshot-window"
+	"Screenshot screen|niri msg action screenshot-screen"
+	"Power off all monitors|niri msg action power-off-monitors"
+	"Power on all monitors|niri msg action power-on-monitors"
+	"Quit|niri msg action quit"
+	)
+
+Waybar_Signals=(
+	"..|Commands"
+	"Quit|niri msg action do-screen-transition ; pkill waybar"
+	"Start|niri msg action do-screen-transition ; waybar"
+	"Restart|niri msg action do-screen-transition ; pkill -SIGUSR2 waybar"
+	"Toggle visibility|niri msg action do-screen-transition ; pkill -SIGUSR1 waybar"
+	)
+
+Systemd_Services=(
+	"..|Commands"
+	"Swaync stop|systemctl --user stop swaync"
+	"Swaync restart|systemctl --user restart swaync"
+	"Swww stop|systemctl --user stop swww"
+	"Swww restart|systemctl --user restart swww"
+	"Swayidle stop|systemctl --user stop swayidle"
+	"Swayidle restart|systemctl --user restart swayidle"
+	"Xwayland-satellite stop|systemctl --user stop xwayland-satellite"
+	"Xwayland-satellite restart|systemctl --user restart xwayland-satellite"
+	)
+
+# Display a menu
+show_menu() {
+	local menu_name=$1
+	local -n menu=$menu_name
+	echo -en "\0no-custom\x1ftrue\n"
+	echo -en "\0message\x1f$menu_name\n"
+	echo -en "\0data\x1f$menu_name\n"
+	for entry in "${menu[@]}"; do
+		IFS='|' read -r label _ <<< "$entry"
+		echo "$label"
+	done
+}
+
+# Main logic
+if [[ "$ROFI_RETV" -eq 0 ]]; then
+	show_menu Commands
+else
+	current_menu="${ROFI_DATA:-Commands}"
+	declare -n selected_menu="$current_menu"
+	selected_label="$1"
+
+	for entry in "${selected_menu[@]}"; do
+		IFS='|' read -r label action <<< "$entry"
+		if [[ "$label" == "$selected_label" ]]; then
+			if declare -p "$action" &>/dev/null; then
+				show_menu "$action"
+			else
+				eval "$action"
+			fi
+			exit 0
+		fi
+	done
+
+	notify-send "Unknown option selected: $selected_label"
+fi

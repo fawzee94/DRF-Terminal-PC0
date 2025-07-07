@@ -1,0 +1,58 @@
+#╒ ▸ 𜶋 𜵧 ═╾
+#╘══════╡▟▛ ▀▄▀▄▀ 🭊 ◥▞ 🬱 ⬤ ◀ █𜶈:
+#
+#	 ᔖ ᑢ ᔵ ᘍ ᘍ ∏
+#	 ᒶ ᘎ ᑢ ᖼ ᘍ ᔵ
+#	
+#	 ᑢ ᘎ ∏ ᖷ ᐞ ᕌ
+#	 ᐳ ~/.swaylock/config
+#╼═╡ᖷ ᗐ ᔭ╞══════════════════════╛
+
+#╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+#╰───────────────────────────────╮
+
+font=Nothing Font (5x7)
+ignore-empty-password
+grace=2l
+clock
+timestr=%R
+datestr=%a, %e of %B
+indicator
+
+#╰───────────────────────────────╯
+
+#╒╡ᒭ ᕼ ᘍ ᗑ ᘍ╞┅ᐧ
+#╰───────────────────────────────╮
+
+# Indicator
+indicator-radius=200
+indicator-thickness=5
+text-wrong-color=eeeeee
+#╰─────────────────────────────╯
+
+# Background
+screenshots
+effect-pixelate=10
+text-wrong-color=eeeeee
+#╰─────────────────────────────╯
+
+#Colors
+inside-color=00000000
+inside-ver-color=00000000
+inside-clear-color=00000000
+inside-wrong-color=00000000
+inside-caps-lock-color=00000000
+
+ring-color=87af5f
+ring-clear-color=87af5f
+ring-ver-color=87af5f
+ring-wrong-color=ff5f5f
+ring-caps-lock-color=eeeeee
+
+text-color=eeeeee
+text-clear-color=eeeeee
+text-ver-color=eeeeee
+text-wrong-color=eeeeee
+#╰─────────────────────────────╯
+
+#╰───────────────────────────────╯

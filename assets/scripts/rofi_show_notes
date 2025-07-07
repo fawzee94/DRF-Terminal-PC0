@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+theme='~/dotfiles/assets/themes/rofi_show_notes.rasi'
+config="~/dotfiles/rofi/launcher.rasi"
+
+FILE="$HOME/dotfiles/assets/drf/drf_notes"
+
+[ -f "$FILE" ] || { echo "No file given or file doesn't exist"; exit 1; }
+
+CHOICE=$(cat "$FILE" | rofi -config ${config} -theme ${theme} -dmenu -p "Pick a line")
+
+[ -z "$CHOICE" ] && exit 0
+
+ACTION=$(printf "Copy\nDelete" | rofi -config ${config} -theme ${theme} -dmenu -p "Action for: $CHOICE")
+
+case "$ACTION" in
+  Copy)
+    printf "%s" "$CHOICE" | xclip -selection clipboard
+    ;;
+  Delete)
+    grep -vxF "$CHOICE" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+    ;;
+esac

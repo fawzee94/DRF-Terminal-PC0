@@ -1,0 +1,273 @@
+//╒ ▸ 𜶋 𜵧 ═╾
+//╘══════╡▀▄▀▄▀ 🭊 ◥▞ ꔪ 🭊 𜶋:
+//
+//	  ᗱ ᐐ ᔵ
+//	
+//	  ᒵ ᔖ ᘎ ∏ ᑢ
+//	  ᐳ ~/.config/waybar/config.jsonc
+//╼═╡ᖷ ᗐ ᔭ╞═══════════════════════════════╛
+
+//╒╡ᗑ ᐐ ᐞ ∏   ᗑ ᘎ ∏ ᐞ ᒭ ᘎ ᔵ╞┅ᐧ
+[{
+
+//╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+//╰──────────────────────────────────────────────────────────────────────╮
+	"output"				:"HDMI-A-1",
+	"height"				:23,
+	"spacing"				:0,
+	"margin-top"				:0,
+	"margin-left"				:0,
+	"margin-right"				:0,
+	"reload_style_on_change"		:true,
+//	╰────────────────────────────────────────────────────────────────╯
+
+//╒╡ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ   ᘎ ᔵ ᕥ ᘍ ᔵ╞┅ᐧ
+//╰──────────────────────────────────────────────────────────────────────╮
+	"modules-left": [
+		"niri/workspaces",
+		"niri/window",
+		"wlr/taskbar"
+		],
+//		╰────────────────────────────────────────────────────────╯
+
+	"modules-center": [
+		"clock",
+		],
+//		╰────────────────────────────────────────────────────────╯
+
+	"modules-right": [
+		"custom/notes",
+		"custom/clipboard",
+		"group/sliders",
+		"custom/swaync",
+		"group/trays",
+		"custom/power-menu",
+		"idle_inhibitor"
+		],
+//		╰────────────────────────────────────────────────────────╯
+//	╰────────────────────────────────────────────────────────────────╯
+
+//╒╡ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ   ᘎ ᑶ ᒭ ᐞ ᘎ ∏ ᔖ╞┅ᐧ
+//╰──────────────────────────────────────────────────────────────────────╮
+
+//╒╡ᒶ ᘍ ᖷ ᒭ╞┅ᐧ
+//╰──────────────────────────────────────────────────────────────────────╮
+	"niri/workspaces": {
+		"format"			:"{icon}",
+		"format-icons": {
+			"focused"		:"󰃚",
+			"active"		:"󰃚",
+			"default"		:"󰧞"
+			},
+//			╰────────────────────────────────────────────────╯
+		"all-outputs"			:false
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"niri/window": {
+		"format"			:"{app_id}",
+		"icon"				:false,
+		"tooltip"			:false,
+		"separate-outputs"		:true
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"wlr/taskbar": {
+		"all-outputs"			:false,
+		"active-first"			:true,
+		"icon-size"			:15,
+		"on-click"			:"activate",
+		"on-click-middle"		:"close",
+		"on-click-right"		:"minimize-raise",
+		"format"			:"{icon}"
+		},
+//		╰────────────────────────────────────────────────────────╯
+//	╰────────────────────────────────────────────────────────────────╯
+
+//╒╡ᑢ ᘍ ∏ ᒭ ᘍ ᔵ╞┅ᐧ
+//╰──────────────────────────────────────────────────────────────────────╮
+	"clock": {
+		"format"			:"{:%H : %M}",
+		"tooltip-format"		:"<tt>{calendar}></tt>",
+		"calendar": {
+			"mode"			:"month",
+			"mode-mon-col"		:3,
+			"weeks-pos"		:"left",
+			"on-scroll"		:1,
+			"format": {
+				"months"	:"<span color='#eeeeee'><b>{}</b></span>",
+				"days"		:"<span color='#eeeeee'>{}</span>",
+				"weeks"		:"<span color='#5e5c64'><b>W{}</b></span>",
+				"weekdays"	:"<span color='#eeeeee'><b>{}</b></span>",
+				"today"		:"<span color='#87af5f'><b><u>{}</u></b></span>"
+				}
+//				╰────────────────────────────────────────╯
+			},
+//			╰────────────────────────────────────────────────╯
+		"actions":  {
+			"on-click"		:"mode",
+			"on-click-right"	:"mode",
+			"on-scroll-up"		:"shift_down",
+			"on-scroll-down"	:"shift_up",
+			"on-click-middle"	:"shift_reset"
+			}
+//			╰────────────────────────────────────────────────╯
+		},   
+//	╰────────────────────────────────────────────────────────────────╯
+
+//╒╡ᔵ ᐞ ᕌ ᕼ ᒭ╞┅ᐧ   
+//╰──────────────────────────────────────────────────────────────────────╮
+	"custom/notes": {
+		"format"			:"󰎞",
+		"tooltip"			:false,
+		"on-click"			:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi || bash ~/dotfiles/assets/scripts/rofi_show_notes",
+		"on-click-right"		:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi ; bash ~/dotfiles/assets/scripts/rofi_take_notes",
+		"on-click-middle"		:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi",
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/clipboard": {
+		"format"			:"󰅇",
+		"tooltip"			:false,
+		"on-click"			:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi || bash ~/dotfiles/assets/scripts/rofi_clipboard",
+		"on-click-right"		:"",
+		"on-click-middle"		:"niri msg action do-screen-transition --delay-ms 80; pkill rofi",
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+
+	"group/sliders": {
+		"orientation"			:"horizontal",
+		"modules": [
+			"custom/slider-icon",
+			"custom/ranwall",
+			"backlight",
+			"backlight/slider",
+			"pulseaudio",
+			"pulseaudio/slider"
+			],
+//			╰────────────────────────────────────────────────╯
+		"drawer": {
+			"click-to-reveal"	:true
+			},
+//			╰────────────────────────────────────────────────╯
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/slider-icon": {
+		"format"			:"",
+		"tooltip"			:false
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"backlight": {
+		"device"			:"intel_backlight",
+		"format"			:"{icon} ",
+		"format-icons"			:["󰃜", "󰃠"]
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"backlight/slider": {
+		"min"				:20,
+		"max"				:100,
+		"orientation"			:"horizontal",
+		"device"			:"intel_backlight"
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"pulseaudio": {
+		"format"			:"{icon} ",
+		"format-bluetooth"		:" {icon}",
+		"format-muted"			:"",
+		"format-icons"			:{"default": ["", ""]},
+		"scroll-step"			:1,
+		"on-click"			:"pavucontrol",
+		"ignored-sinks"			:["Easy Effects Sink"]
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"pulseaudio/slider": {
+		"min"				:0,
+		"max"				:100,
+		"orientation"			:"horizontal"
+		}, 
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/ranwall": {
+		"format"			:"",
+		"tooltip"			:false,
+		"on-click"			:"waypaper --random",
+		"on-click-right"		:"swww img ~/dotfiles/assets/wallpapers/wall_debug.png &"
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/swaync": {
+		"tooltip"			:false,
+		"format"			:"{icon}",
+		"format-icons": {
+			"notification"			:"<span foreground='#87af5f'>󰂚</span>",
+			"none"				:"󰂚",
+			"dnd-notification"		:"<span foreground='#87af5f'>󰂛</span>",
+			"dnd-none"			:"󰂛",
+			"inhibited-notification"	:"<span foreground='#87af5f'>󰂚</span>",
+			"inhibited-none"		:"󰂚",
+			"dnd-inhibited-notification"	:"<span foreground='#87af5f'>󰂛</span>",
+			"dnd-inhibited-none": "󰂛"
+			},
+//			╰────────────────────────────────────────────────╯
+		"return-type"			:"json",
+		"exec-if"			:"which swaync-client",
+		"exec"				:"sleep 1 && swaync-client -swb",
+		"on-click"			:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi ; swaync-client -t -sw",
+		"on-click-right"		:"niri msg action do-screen-transition --delay-ms 80 ; swaync-client -d -sw",
+		"on-click-middle"		:"niri msg action do-screen-transition --delay-ms 80 ; swaync-client -C -sw",
+		"escape"			:true
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"group/trays": {
+		"orientation"			:"horizontal",
+		"modules": [
+			"custom/trayicon",
+			"tray"
+			],
+//			╰────────────────────────────────────────────────╯
+		"drawer": {
+			"click-to-reveal"	:true
+			},
+//			╰────────────────────────────────────────────────╯
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/trayicon": {
+		"format"			:"󱊖",
+		"tooltip"			:false
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"tray": {
+		"icon-size"			:15,
+		"spacing"			:5,
+		"show-passive-items"		:true
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"custom/power-menu": {
+		"format"			:"⏼",
+		"tooltip"			:false,
+		"on-click"			:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi || bash ~/dotfiles/assets/scripts/rofi_powermenu",
+		"on-click-middle"		:"niri msg action do-screen-transition --delay-ms 80 ; pkill rofi"
+		},
+//		╰────────────────────────────────────────────────────────╯
+
+	"idle_inhibitor": {
+		"format"			:"{icon}",
+		"format-icons": {
+			"activated"		:"󱓻",
+			"deactivated"		:"󱓻"
+			}
+//			╰────────────────────────────────────────────────╯
+		},
+//		╰────────────────────────────────────────────────────────╯
+	}]
+//	╰────────────────────────────────────────────────────────────────╯

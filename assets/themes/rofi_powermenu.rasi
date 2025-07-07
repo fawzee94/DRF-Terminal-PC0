@@ -1,0 +1,222 @@
+/*
+╒ ▸ 𜶋 𜵧 ═╾
+╘══════╡𜶋 ⬤ 𜵧 ◆:
+
+	ᔵ ᘎ ᖷ ᐞ
+	ᒭ ᕼ ᘍ ᗑ ᘍ
+	
+	ᔵ ᐐ ᔖ ᐞ
+	ᐳ ~/dotfile/assets/themes/rofi_powermenu.rasi
+╼═╡ᖷ ᗐ ᔭ╞═════════════════════════════════════════════╛
+*/
+* {
+/*
+╒╡ᕌ ᒶ ᘎ ᗱ ᐐ ᒶ   ᑶ ᔵ ᘎ ᑶ ᘍ ᔵ ᒭ ᐞ ᘍ ᔖ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+	background		:#282828E6;
+	background-alt		:#444444FF;
+	foreground		:#FFFFFFFF;
+	selected		:#87af5fFF;
+	active			:#87af5fFF;
+	urgent			:#ffaf5fFF;
+	font			:"Nothing Font (5x7) 10";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+configuration {
+	show-icons		:false;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+
+/*
+╒╡ᗑ ᐐ ᐞ ∏   ᗐ ᐞ ∏ ᕥ ᘎ ᗐ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+window {
+	/* properties for window widget */
+	transparency		:"real";
+	location		:1;
+	anchor			:north;
+	fullscreen		:false;
+	width			:105px;
+	x-offset		:1800px;
+	y-offset		:5px;
+
+	/* properties for all widgets */
+	enabled			:true;
+	margin			:0px;
+	padding			:0px;
+	border			:0px solid;
+	border-radius		:0px;
+	border-color		:@selected;
+	cursor			:"default";
+	background-color	:transparent;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᗑ ᐐ ᐞ ∏   ᗱ ᘎ ᙮╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+mainbox {
+	enabled			:true;
+	spacing			:15px;
+	margin			:0px;
+	padding			:0px;
+	border			:0px solid;
+	border-radius		:0px;
+	border-color		:@selected;
+	background-color	:transparent;
+	children		:[ "listview" ];
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᐞ ∏ ᑶ ⊔ ᒭ ᗱ ᐐ ᔵ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+inputbar {
+	enabled			:true;
+	spacing			:15px;
+	margin			:0px;
+	padding			:0px 5px;
+	border			:1px;
+	border-radius		:0px;
+	border-color		:@selected;
+	background-color	:transparent;
+	text-color		:@foreground;
+	children		:[ "textbox-prompt-colon", "prompt"];
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+dummy {
+	background-color	:transparent;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+textbox-prompt-colon {
+	enabled			:true;
+	expand			:false;
+	str			:"";
+	padding			:12px 16px;
+	border-radius		:0px;
+	background-color	:@urgent;
+	text-color		:@background;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+prompt {
+	enabled			:true;
+	padding			:12px;
+	border-radius		:0px;
+	background-color	:@active;
+	text-color		:@background;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᗑ ᘍ ᔖ ᔖ ᐐ ᕌ ᘍ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+message {
+	enabled			:true;
+	margin			:0px;
+	padding			:15px;
+	border			:1px solid;
+	border-radius		:100%;
+	border-color		:@selected;
+	background-color	:@background;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+textbox {
+	background-color	:transparent;
+	text-color		:inherit;
+	vertical-align		:0;
+	horizontal-align	:0;
+	placeholder-color	:@foreground;
+	blink			:true;
+	markup			:true;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+error-message {
+	padding			:12px;
+	border			:0px solid;
+	border-radius		:0px;
+	border-color		:@selected;
+	background-color	:@background;
+	text-color		:@foreground;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᒶ ᐞ ᔖ ᒭ ᕓ ᐞ ᘍ ᗐ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+listview {
+	enabled			:true;
+	columns			:1;
+	lines			:5;
+	cycle			:true;
+	dynamic			:true;
+	scrollbar		:false;
+	layout			:vertical;
+	reverse			:false;
+	fixed-height		:true;
+	fixed-columns		:true;
+    
+	spacing			:5px;
+	margin			:0px;
+	padding			:0px;
+	border			:0px solid;
+	border-radius		:0px;
+	border-color		:@selected;
+	background-color	:transparent;
+	text-color		:@foreground;
+	cursor			:"default";
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/
+/*
+╒╡ᘍ ᒶ ᘍ ᗑ ᘍ ∏ ᒭ ᔖ╞┅ᐧ
+╰────────────────────────────────────────────────────────────────────────╮*/
+element {
+	enabled			:true;
+	spacing			:0px;
+	margin			:0px;
+	padding			:5px 5px;
+	border			:1px solid;
+	border-radius		:100%;
+	border-color		:@selected;
+	background-color	:@background;
+	text-color		:@foreground;
+	cursor			:pointer;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element-text {
+	font			:@font;
+	background-color	:transparent;
+	text-color		:inherit;
+	cursor			:inherit;
+	vertical-align		:0;
+	horizontal-align	:0;
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+element selected.normal {
+	background-color	:var(background-alt);
+	text-color		:var(selected);
+	}
+/*	╰────────────────────────────────────────────────────────────────╯*/
+
+/*	╰────────────────────────────────────────────────────────────────╯*/

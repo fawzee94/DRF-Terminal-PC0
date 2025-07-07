@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+theme='~/dotfiles/assets/themes/rofi_take_notes.rasi'
+config="~/dotfiles/rofi/launcher.rasi"
+
+FILE="$HOME/dotfiles/assets/drf/drf_notes"
+
+[ -f "$FILE" ] || { echo "No file given or file doesn't exist"; exit 1; }
+
+NEWLINE=$(rofi -config ${config} -theme ${theme} -dmenu -p "Add a new line")
+
+[ -z "$NEWLINE" ] && exit 0
+
+echo "$NEWLINE" >> "$FILE"
