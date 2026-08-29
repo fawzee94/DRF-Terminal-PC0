@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-swww img ~/dotfiles/assets/wallpapers/wall.png &
+awww img ~/dotfiles/assets/wallpapers/wall.png &
+sleep 0.5
 waybar &
 sleep 0.5
 nm-applet &

@@ -13,14 +13,14 @@
 '
 
 #╒╡ᕌ ᒶ ᘎ ᗱ ᐐ ᒶ   ᕥ ᘍ ᖷ ᔖ╞┅ᐧ
-#╰───────────────────────────────────────────────────────────────────────╮
+#╰───────────────────────────────────────╮
 	if [ -f /etc/bashrc ]; then
 	    . /etc/bashrc
 	fi
-#	╰────────────────────────────────────────────────────────────────╯
+#	╰────────────────────────────────╯
 
 #╒╡⊔ ᔖ ᘍ ᔵ   ᘍ ∏ ᕓ ᐞ ᔵ ᘎ ∏ ᗑ ᘍ ∏ ᒭ╞┅ᐧ
-#╰───────────────────────────────────────────────────────────────────────╮
+#╰───────────────────────────────────────────────────────────────╮
 	if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
 	    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 	fi
@@ -30,10 +30,10 @@
 	export ICON_THEME=Tela-circle-manjaro-dark
 	export XCURSOR_THEME=BreezeX-Black
 	export QT_QPA_PLATFORMTHEME=qt5ct
-#	╰────────────────────────────────────────────────────────────────╯
+#	╰────────────────────────────────────────────────────────╯
 
 #╒╡ᐐ ᒶ ᐞ ᐐ ᔖ ᘍ ᔖ╞┅ᐧ
-#╰───────────────────────────────────────────────────────────────────────╮
+#╰───────────────────────────────────────────────────────────────╮
 	alias mineshell="nix-shell -p openjdk17 wget unzip"
 	alias minestart="bash ~/MINECRAFT/run.sh"
 	
@@ -44,11 +44,11 @@
 	
 	alias stowd="cd ~/dotfiles"
 	
-	alias nixconfig="sudo -E gedit /etc/nixos/configuration.nix"
+	alias nixconfig="sudo -E gedit /etc/nixos/configuration.nix & sudo -E gedit /etc/nixos/flake.nix"
 	alias nixshell="nix-shell -p"
 	alias nixrebuild="sudo nixos-rebuild switch"
 	alias nixgens="sudo nix-env -p /nix/var/nix/profiles/system --list-generations"
-#	╰────────────────────────────────────────────────────────────────╯
+#	╰────────────────────────────────────────────────────────╯
 
 #╒╡ᑢ ᘎ ∏ ᖷ ᐞ ᕌ   ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ╞┅ᐧ
 #╰───────────────────────────────────────────────────────────────────────╮

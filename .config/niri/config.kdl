@@ -10,126 +10,150 @@
 
 //╒╡ᐞ ∏ ᑶ ⊔ ᒭ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
-	input {
-		keyboard {
-			xkb {
+
+
+	input { //───────────────────────────────────────────────────────╮
+	
+	
+		keyboard { //────────────────────────────────────────────╮
+		
+		
+			xkb { //─────────────────────────────────────────╮
 				layout		"gb"
 				options		"numpad:mac"
-				}
-//				╰────────────────────────────────────────╯
-			}
-//			╰────────────────────────────────────────────────╯
-		touchpad {
+				} //─────────────────────────────────────╯
+				
+				
+			} //─────────────────────────────────────────────╯
+			
+			
+		touchpad { //────────────────────────────────────────────╮
 			tap
 			dwt
 			natural-scroll
-			}
-//			╰────────────────────────────────────────────────╯
-		mouse {
-			// off
-			}
-//			╰────────────────────────────────────────────────╯
-		trackpoint {
-			// off
-			}
-//			╰────────────────────────────────────────────────╯
-		}
-//	╰────────────────────────────────────────────────────────────────╯
+			} //─────────────────────────────────────────────╯
+			
+			
+		} //─────────────────────────────────────────────────────╯
 
-//╒╡ᘎ ⊔ ᒭ ᑶ ⊔ ᒭ╞┅ᐧ
-//╰──────────────────────────────────────────────────────────────────────╮
-	/-output "eDP-1" {
-		// off
+//╒╡ᘎ ⊔ ᒭ ᑶ ⊔ ᒭ ᔖ╞┅ᐧ───────────────────────────────────────────────────────╮
+
+
+	/-output "eDP-1" {  //───────────────────────────────────────────╮
 		position	x=0 y=0 //regular position
-		//position	x=0 y=1080 //position for tv screen
-		}
-//		╰────────────────────────────────────────────────────────╯
-	output "PNP(UGD) Artist 12     0x00000002" {
+		} //─────────────────────────────────────────────────────╯
+
+
+	output "PNP(UGD) Artist 12     0x00000002" {  //─────────────────╮
 		scale		1
-		position	x=0 y=1080 //regular position
-		//position	x=0 y=2160 //tv screen
-		}
-//		╰────────────────────────────────────────────────────────╯
-	output "Technical Concepts Ltd TCL SMART TV 0x00011011" {
+		position	x=1440 y=1080
+		} //─────────────────────────────────────────────────────╯
+
+
+	output "PNP(JRY) HDMI 0x00000001" { //───────────────────────────╮
+		scale		1
+		position	x=1440 y=0
+		mode		"1920x1080@60.000"
+		} //─────────────────────────────────────────────────────╯
+
+
+	output "Dell Inc. DELL E1910 X237R0A7190S" {  //─────────────────╮
+		scale		1
+		//     transform	"270"
+		position	x=0 y=400
+		mode		"1440x900@74.984"
+		} //─────────────────────────────────────────────────────╯
+
+
+	/-output "Technical Concepts Ltd TCL SMART TV 0x00011011" {  //──╮
 		scale		1
 		position	x=0 y=0
 		mode		"1920x1080@60.000"
-		}
-//		╰────────────────────────────────────────────────────────╯
-//	╰────────────────────────────────────────────────────────────────╯
+		} //─────────────────────────────────────────────────────╯
 
-//╒╡ᒶ ᐐ ⋋ ᘎ ⊔ ᒭ╞┅ᐧ
-//╰──────────────────────────────────────────────────────────────────────╮
-	layout {
+
+//╒╡ᒶ ᐐ ⋋ ᘎ ⊔ ᒭ╞┅ᐧ────────────────────────────────────────────────────────╮
+
+
+	layout { //──────────────────────────────────────────────────────╮
 		gaps				10
 		center-focused-column		"never"
 		default-column-display		"normal"
 		default-column-width		{ proportion 0.5; }
 
-		preset-column-widths {
+
+		preset-column-widths { //────────────────────────────────╮
 			proportion		0.25
 			proportion		0.33333
 			proportion		0.5
 			proportion		0.66667
 			proportion		0.75
-			}
-//			╰────────────────────────────────────────────────╯
-		preset-window-heights {
+			} //─────────────────────────────────────────────╯
+			
+			
+		preset-window-heights { //───────────────────────────────╮
 			proportion		0.25
 			proportion		0.33333
 			proportion		0.5
 			proportion		0.66667
 			proportion		0.75
-			}
-//			╰────────────────────────────────────────────────╯
-		tab-indicator {
-			width			5
+			} //─────────────────────────────────────────────╯
+
+
+		tab-indicator { //───────────────────────────────────────╮
+			width			10
 			gap			5
 			gaps-between-tabs	5
 			length			total-proportion=0.7
 			corner-radius		16
-			position		"left"
+			position		"top"
 			active-color		"#87af5f"
 			inactive-color		"#5e5c64"
 			place-within-column
-			}
-//			╰────────────────────────────────────────────────╯
-		focus-ring {
+			} //─────────────────────────────────────────────╯
+			
+			
+		focus-ring { //──────────────────────────────────────────╮
 			off
 			width			1
 			active-gradient		from="#87af5f" to="#282828" angle=180
 			inactive-gradient	from="#5e5c64" to="#282828" angle=180
-			}
-//			╰────────────────────────────────────────────────╯
-		border {
+			} //─────────────────────────────────────────────╯
+			
+			
+		border { //──────────────────────────────────────────────╮
 			//off
 			width			1
 			active-gradient		from="#87af5f" to="#282828" angle=180
 			inactive-gradient	from="#5e5c64" to="#282828" angle=180
-			}
-//			╰────────────────────────────────────────────────╯
-		insert-hint {
+			} //─────────────────────────────────────────────╯
+			
+			
+		insert-hint { //─────────────────────────────────────────╮
 			off
 			color			"#87af5f"
 			gradient		from="#87af5f" to="#1BA80680" angle=180 relative-to="workspace-view"
-			}
-//			╰────────────────────────────────────────────────╯
-		shadow {
+			} //─────────────────────────────────────────────╯
+			
+			
+		shadow { //──────────────────────────────────────────────╮
 			//on
 			softness		15
 			spread			5
 			draw-behind-window	true        
-			}
-//			╰────────────────────────────────────────────────╯
-		struts {
+			} //─────────────────────────────────────────────╯
+			
+			
+		struts { //──────────────────────────────────────────────╮
 			left			5
 			right			5
 			top			-5
 			bottom			-5
-			}
-//			╰────────────────────────────────────────────────╯
-		}
-//	╰────────────────────────────────────────────────────────────────╯
+			} //─────────────────────────────────────────────╯
+			
+			
+		} //─────────────────────────────────────────────────────╯
+
 
 //╒╡ᔖ ᒭ ᐐ ᔵ ᒭ ⊔ ᑶ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
@@ -161,7 +185,7 @@
 //╒╡ᗐ ᐞ ∏ ᕥ ᘎ ᗐ   ᔵ ⊔ ᒶ ᘍ ᔖ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
 	window-rule {
-		geometry-corner-radius		16
+		geometry-corner-radius		6
 		opacity				0.95
 		draw-border-with-background	false
 		clip-to-geometry		true
@@ -183,7 +207,13 @@
 		}
 //		╰────────────────────────────────────────────────────────╯
 	window-rule {
-		match				title="Vivaldi"
+		match 				title="Vivaldi"
+		opacity				1.0
+		open-maximized			false
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Brave"
 		opacity				1.0
 		open-maximized			false
 		}
@@ -206,6 +236,85 @@
 		open-maximized			true
 		}
 //		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Godot"
+		opacity				1.0
+		open-maximized			false
+		open-on-output			"PNP(JRY) HDMI 0x00000001"
+		default-column-width		{ fixed 1128; }
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Import - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Scene - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Groups - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"HDMI-A-1"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Inspector - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Signals - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="FileSystem - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 367; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Output - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		default-column-width		{ fixed 751; }
+		open-on-output			"PNP(UGD) Artist 12     0x00000002"
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				title="Script Editor - Godot Engine"
+		opacity				1.0
+		open-maximized			false
+		open-on-output			"PNP(JRY) HDMI 0x00000001"
+		default-column-width		{ fixed 1212; }
+		}
+//		╰────────────────────────────────────────────────────────╯
+	window-rule {
+		match				app-id="org.nomacs.ImageLounge"
+		opacity				1.0
+		open-maximized			false
+		}
+//		╰────────────────────────────────────────────────────────╯
+
 //	╰────────────────────────────────────────────────────────────────╯
 
 //╒╡ᖼ ᘍ ⋋ ᗱ ᐞ ∏ ᕥ ᔖ╞┅ᐧ

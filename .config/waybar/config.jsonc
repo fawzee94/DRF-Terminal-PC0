@@ -12,7 +12,7 @@
 
 //╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
-	"output"				:"HDMI-A-1",
+	"output"				:"DP-1",
 	"height"				:23,
 	"spacing"				:0,
 	"margin-top"				:0,
@@ -24,8 +24,9 @@
 //╒╡ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ   ᘎ ᔵ ᕥ ᘍ ᔵ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
 	"modules-left": [
-		"niri/workspaces",
-		"niri/window",
+		"mango/workspaces",
+		"mango/layout",
+		"mango/window",
 		"wlr/taskbar"
 		],
 //		╰────────────────────────────────────────────────────────╯
@@ -52,36 +53,30 @@
 
 //╒╡ᒶ ᘍ ᖷ ᒭ╞┅ᐧ
 //╰──────────────────────────────────────────────────────────────────────╮
-	"niri/workspaces": {
-		"format"			:"{icon}",
+	"mango/workspaces": {
+		"format": "{icon}",
 		"format-icons": {
-			"focused"		:"󰃚",
-			"active"		:"󰃚",
-			"default"		:"󰧞"
+			"1": "一",
+			"2": "二",
+			"active": "",
+			"default": "",
+			"urgent": "",
+			"empty": ""
 			},
-//			╰────────────────────────────────────────────────╯
-		"all-outputs"			:false
+		"on-click": "activate",
+		"on-click-right": "toggle",
+		"overview-label": "OVERVIEW",
 		},
-//		╰────────────────────────────────────────────────────────╯
-
-	"niri/window": {
-		"format"			:"{app_id}",
-		"icon"				:false,
-		"tooltip"			:false,
-		"separate-outputs"		:true
+	"mango/window": {
+		"format": "{title}",
+		"icon": true,
+		"icon-size": 20
 		},
-//		╰────────────────────────────────────────────────────────╯
-
-	"wlr/taskbar": {
-		"all-outputs"			:false,
-		"active-first"			:true,
-		"icon-size"			:15,
-		"on-click"			:"activate",
-		"on-click-middle"		:"close",
-		"on-click-right"		:"minimize-raise",
-		"format"			:"{icon}"
+	"mango/layout": {
+		"format": "[] {symbol}",
+		"format-S": "󰌌 {symbol}",
+		"format-M": "󰕰 {symbol}"
 		},
-//		╰────────────────────────────────────────────────────────╯
 //	╰────────────────────────────────────────────────────────────────╯
 
 //╒╡ᑢ ᘍ ∏ ᒭ ᘍ ᔵ╞┅ᐧ
@@ -197,7 +192,7 @@
 		"format"			:"",
 		"tooltip"			:false,
 		"on-click"			:"waypaper --random",
-		"on-click-right"		:"swww img ~/dotfiles/assets/wallpapers/wall_debug.png &"
+		"on-click-right"		:"awww img ~/dotfiles/assets/wallpapers/wall_debug.png &"
 		},
 //		╰────────────────────────────────────────────────────────╯
 
