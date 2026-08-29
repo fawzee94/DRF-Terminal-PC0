@@ -38,16 +38,13 @@
 	alias minestart="bash ~/MINECRAFT/run.sh"
 	
 	alias clear="clear && fastfetch"
-	alias ls="ls -a -w 1"
+	alias ls="ls -a -w"
 	
 	alias figd="figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"
 	
-	alias stowd="cd ~/dotfiles"
-	
 	alias nixconfig="sudo -E gedit /etc/nixos/configuration.nix & sudo -E gedit /etc/nixos/flake.nix"
-	alias nixshell="nix-shell -p"
-	alias nixrebuild="sudo nixos-rebuild switch"
-	alias nixgens="sudo nix-env -p /nix/var/nix/profiles/system --list-generations"
+	alias nixtry="nix-shell -p"
+	alias nixrebuild="sudo nixos-rebuild boot --impure"
 #	╰────────────────────────────────────────────────────────╯
 
 #╒╡ᑢ ᘎ ∏ ᖷ ᐞ ᕌ   ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ╞┅ᐧ
