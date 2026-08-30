@@ -42,7 +42,6 @@
 	
 	alias figd="figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"
 	
-	alias nixconfig="sudo -E gedit /etc/nixos/configuration.nix & sudo -E gedit /etc/nixos/flake.nix"
 	alias nixtry="nix-shell -p"
 	alias nixrebuild="sudo nixos-rebuild boot --impure"
 #	╰────────────────────────────────────────────────────────╯
