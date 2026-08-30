@@ -10,9 +10,7 @@
 
   programs.starship.enable = true;
   programs.nm-applet.enable = true;
-  # FLAG: only the PC config had this; made it shared since Steam itself
-  # is harmless to enable even where it's unused. Say the word if you'd
-  # rather keep it desktop-only.
+  programs.seahorse.enable = true;
   programs.steam.enable = true;
 
   environment.systemPackages = with pkgs; [

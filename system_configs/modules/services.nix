@@ -21,7 +21,7 @@
   # currently laptop-only too (see hosts/laptop.nix), that service moved
   # there with it rather than being forced onto the desktop.
   systemd.user.services = {
-    swww = {
+    awww = {
       description = "Background service";
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
@@ -40,4 +40,6 @@
       };
     };
   };
+  security.pam.services.ly.enableGnomeKeyring = true;
+  security.pam.services.swaylock.enableGnomeKeyring = true;
 }
