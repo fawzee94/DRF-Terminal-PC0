@@ -1,0 +1,16 @@
+# Espanso base configuration options
+
+# Show a notification when Espanso starts or restarts
+show_notifications: false
+
+# Toggle backspace behavior (deletes the trigger text after expansion)
+backspace_undo: true
+
+# Set key toggle (e.g., press ALT twice to pause/resume Espanso)
+toggle_key: ALT
+
+search_shortcut: off
+
+search_trigger: ":esp"
+
+show_icon: true

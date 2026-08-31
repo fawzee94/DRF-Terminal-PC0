@@ -49,7 +49,10 @@
     WLR_NO_HARDWARE_CURSOR = "1";
     NIXOS_OZONE_WL = "1";
   };
-
+  systemd.user.sessionVariables = {
+    # Forces wxWidgets / Espanso to use AppIndicator for system tray
+    QT_QPA_PLATFORM = "wayland";
+  };
   # ---- XDG portals ---------------------------------------------------------
   # FLAG: your two configs disagreed here - the PC used
   # xdg-desktop-portal-wlr (screencast/screenshot for wlroots compositors)

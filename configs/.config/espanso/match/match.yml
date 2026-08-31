@@ -1,0 +1,21 @@
+
+matches:
+  # 1. Email shortcut
+  - trigger: ":mail"
+    replace: "faotz94@gmail.com"
+
+  # 2. Dynamic date insertion (YYYY-MM-DD)
+  - trigger: ":date"
+    replace: "{{today}}"
+    vars:
+      - name: today
+        type: date
+        params:
+          format: "%d-%m-%Y"
+
+  # 3. Multiline signature template
+  - trigger: ":sig"
+    replace: |
+      Best regards,
+      Alex Smith
+      Software Engineer | My Company
