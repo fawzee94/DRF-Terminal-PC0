@@ -4,7 +4,7 @@
 show_notifications: false
 
 # Toggle backspace behavior (deletes the trigger text after expansion)
-backspace_undo: true
+undo_backspace: true
 
 # Set key toggle (e.g., press ALT twice to pause/resume Espanso)
 toggle_key: ALT
@@ -13,4 +13,7 @@ search_shortcut: off
 
 search_trigger: ":esp"
 
-show_icon: true
+show_icon: true 
+
+keyboard_layout:
+  layout: "gb"

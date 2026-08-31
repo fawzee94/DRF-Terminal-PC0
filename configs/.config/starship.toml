@@ -15,7 +15,7 @@
 	format		="""  $cmd_duration
 $time$username$hostname
 [  │](#5e5c64)
-$directory $nix_shell
+$directory $git_branch$git_status $nix_shell
 $character"""
 #	╰────────────────────────────────────────────────────────────────╯
 
@@ -63,4 +63,13 @@ $character"""
 	impure_msg			="impure"
 	pure_msg			="pure"
 	unknown_msg			="?"
+#	╰────────────────────────────────────────────────────────────────╯
+[git_branch]
+	format				="""[[$symbol $branch(:$remote_branch)](bg:#5e5c64 fg:#87af5f)](bg:#282828 fg:#5e5c64)"""
+	style				="bg:#5e5c64"
+	symbol				="(bg:#5e5c64 fg:#87af5f)"
+#	╰────────────────────────────────────────────────────────────────╯
+[git_status]
+	format				='([$all_status$ahead_behind]($style))'
+	style				="fg:#a36f3b"
 #	╰────────────────────────────────────────────────────────────────╯

@@ -34,16 +34,8 @@
 
 #╒╡ᐐ ᒶ ᐞ ᐐ ᔖ ᘍ ᔖ╞┅ᐧ
 #╰───────────────────────────────────────────────────────────────╮
-	alias mineshell="nix-shell -p openjdk17 wget unzip"
-	alias minestart="bash ~/MINECRAFT/run.sh"
-	
-	alias clear="clear && fastfetch"
-	alias ls="ls -a -w"
-	
-	alias figd="figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"
-	
-	alias nixtry="nix-shell -p"
-	alias nixrebuild="sudo nixos-rebuild boot --impure"
+	alias ccl="clear && fastfetch"
+	alias ls="ls -a"
 #	╰────────────────────────────────────────────────────────╯
 
 #╒╡ᑢ ᘎ ∏ ᖷ ᐞ ᕌ   ᗑ ᘎ ᕥ ⊔ ᒶ ᘍ ᔖ╞┅ᐧ

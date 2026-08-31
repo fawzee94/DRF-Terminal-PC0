@@ -1,21 +1,44 @@
 
+global_vars:
+
+  - name: today
+    type: date
+    params:
+      format: "%d-%m-%Y"
+      
+  - name: now
+    type: date
+    params:
+      format: "%H:%M"
+      
 matches:
-  # 1. Email shortcut
+
+  # Email shortcut
   - trigger: ":mail"
     replace: "faotz94@gmail.com"
 
-  # 2. Dynamic date insertion (YYYY-MM-DD)
+  # Date/Time
   - trigger: ":date"
     replace: "{{today}}"
-    vars:
-      - name: today
-        type: date
-        params:
-          format: "%d-%m-%Y"
 
-  # 3. Multiline signature template
-  - trigger: ":sig"
-    replace: |
-      Best regards,
-      Alex Smith
-      Software Engineer | My Company
+  - trigger: ":time"
+    replace: "{{now}}"
+
+  - trigger: ":tdate"
+    replace: "{{today}} {{now}}"
+
+  # Commands
+  - trigger: ":figlet"
+    replace: "figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"
+    
+  - trigger: ":nixtry"
+    replace: "nix-shell -p"
+    
+  - trigger: ":nixrebuild"
+    replace: "sudo nixos-rebuild boot --impure"
+    
+  - trigger: ":nixstow"
+    replace: "stow -d ~/dotfiles -t ~ configs"
+    
+  - trigger: ":homestow"
+    replace: "stow -d ~/dotfiles -t /etc/nixos system_configs"
