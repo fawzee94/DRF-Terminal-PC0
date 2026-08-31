@@ -1,6 +1,6 @@
 # Locale, display server, display manager, window manager, XDG portals,
 # and fonts - the visible desktop layer. Shared between both machines.
-{ pkgs, lib, ... }:
+{ pkgs, lib, unstable, ... }:
 {
   # ---- Locale & keyboard -------------------------------------------------
   time.timeZone = "Europe/London";

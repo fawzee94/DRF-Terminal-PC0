@@ -16,7 +16,7 @@
   };
   
   # ---- Text expander ----------------------------------------------------
-  services.espanso = {
+  services.espanso = with pkgs; {
     enable = true;
     package = espanso-wayland;
   };
