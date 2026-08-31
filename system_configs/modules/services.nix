@@ -14,7 +14,12 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
+  
+  # ---- Text expander ----------------------------------------------------
+  services.espanso = {
+    enable = true;
+    package = espanso-wayland;
+  };
   # ---- Per-session daemons --------------------------------------------------
   # swww (wallpaper daemon) and swayidle (idle/lock handling) are shared.
   # xwayland-satellite was only in the laptop config; since niri is

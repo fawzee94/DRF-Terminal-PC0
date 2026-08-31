@@ -12,7 +12,11 @@
 #╰───────────────────────────────────────────────────────────────────────╮
 	"$schema"	='https://starship.rs/config-schema.json'
 
-	format		="""[](#5e5c64)$time[](bg:#87af5f fg:#5e5c64)$username$hostname[](bg:#5e5c64 fg:#87af5f)$directory[](#5e5c64) $cmd_duration\n$character"""
+	format		="""  $cmd_duration
+$time$username$hostname
+[  │](#5e5c64)
+$directory $nix_shell
+$character"""
 #	╰────────────────────────────────────────────────────────────────╯
 
 #╒╡ᕌ ᘍ ∏ ᘍ ᔵ ᐐ ᒶ╞┅ᐧ
@@ -20,7 +24,7 @@
 [hostname]
 	ssh_only		=false
 	style			="fg:#282828 bg:#87af5f"
-	format			='[󰁥 $hostname ]($style)'
+	format			='[󰁥 $hostname]($style)[](bg:#282828 fg:#87af5f)'
 	trim_at			='.companyname.com'
 	disabled		=false
 #	╰────────────────────────────────────────────────────────────────╯
@@ -28,11 +32,11 @@
 	show_always		=true
 	style_user		="bg:#87af5f fg:#282828"
 	style_root		="bg:#87af5f fg:#282828"
-	format			='[  $user ]($style)'
+	format			='[ $user]($style)'
 #	╰────────────────────────────────────────────────────────────────╯
 [directory]
-	style			="fg:#eeeeee bg:#5e5c64"
-	format			="[  $path ]($style)"
+	style				="fg:#eeeeee bg:#5e5c64"
+	format				="[ [ $path]($style)](#5e5c64)"
 	truncation_length	=3
 	truncation_symbol	="…/"
 #	╰────────────────────────────────────────────────────────────────╯
@@ -40,15 +44,23 @@
 	disabled		=false
 	time_format		="%R" # Hour:Minute Format
 	style			="bg:#5e5c64"
-	format			='[[  $time ](fg:#eeeeee bg:#5e5c64)]($style)'
+	format			='[](bg:#282828 fg:#5e5c64)[ $time ](fg:#eeeeee bg:#5e5c64)($style)[▓▒░](bg:#87af5f fg:#5e5c64)'
 #	╰────────────────────────────────────────────────────────────────╯
 [character]
-	format			="""[╰─$symbol](fg:current_line) """
-	success_symbol		='[](fg:#87af5f)'
-	error_symbol		='[](fg:bold red)'
+	format				="""[  ╰](#5e5c64)[$symbol ](fg:current_line)"""
+	success_symbol		='[●](fg:#87af5f)'
+	error_symbol		='[●](fg:bold red)'
 #	╰────────────────────────────────────────────────────────────────╯
 [cmd_duration]
-	min_time		=0
+	min_time			=0
 	show_milliseconds	=true
-	format			='[󰜷$duration](#5e5c64)'
+	format				='[󰜷$duration](#5e5c64)'
+#	╰────────────────────────────────────────────────────────────────╯
+[nix_shell]
+	format				="""[[$symbol-$name $state](bg:#5e5c64 fg:#87af5f)](bg:#282828 fg:#5e5c64)"""
+	style				="bg:#5e5c64"
+	symbol				="(bg:#5e5c64 fg:#87af5f)"
+	impure_msg			="impure"
+	pure_msg			="pure"
+	unknown_msg			="?"
 #	╰────────────────────────────────────────────────────────────────╯

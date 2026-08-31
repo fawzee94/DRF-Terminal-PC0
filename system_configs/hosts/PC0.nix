@@ -30,9 +30,15 @@
   };
 
   hardware.opentabletdriver.enable = true;
-
-  # FLAG: kept exactly as it was in your original PC config. This is
-  # NOT meant to just track the latest NixOS release - only bump it if
-  # you've read the release notes for the version jump and are sure.
+  
+  # ---- Machine exclusive packages --------------------------------------
+  environment.systemPackages = with pkgs; [
+    # Font editor
+    fontforge-gtk
+  ];
+  
+  # NixOS version at the time of install for legacy support purposes
+  # after updates- only bump it if you've read the release notes for
+  # the version jump and are sure.
   system.stateVersion = "25.05";
 }

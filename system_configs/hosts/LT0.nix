@@ -47,6 +47,10 @@
 
   hardware.opentabletdriver.enable = true;
 
+  # ---- Machine exclusive packages --------------------------------------
+  environment.systemPackages = with pkgs; [
+    
+  ];
 
 
   # FLAG: kept at the laptop's original value rather than bumping to

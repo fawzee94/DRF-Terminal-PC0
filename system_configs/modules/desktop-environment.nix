@@ -40,7 +40,10 @@
   # ---- Window manager -----------------------------------------------------
   # Mango is shared. Niri is currently laptop-only - see hosts/laptop.nix
   # and the FLAG comment there.
-  programs.mangowc.enable = true;
+  programs.mangowc = {
+    enable = true;
+    package = unstable.mango;
+  };
 
   environment.sessionVariables = {
     WLR_NO_HARDWARE_CURSOR = "1";
