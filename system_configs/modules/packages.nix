@@ -121,6 +121,8 @@
     unstable.godot
     # Video editing
     video-trimmer
+    # AI
+    claude-code
 
     # ---- Other ----
     # Torrent client
