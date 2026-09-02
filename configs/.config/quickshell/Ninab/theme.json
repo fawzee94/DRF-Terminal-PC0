@@ -1,0 +1,27 @@
+{
+    "pillSize": {
+        "width": 120,
+        "height": 36
+    },
+    "cardSize": {
+        "width": 200,
+        "height": 250,
+        "buttonSize": 8
+    },
+    "cornerRadius": 16,
+
+    "slider": {
+        "height": 14,
+        "cornerRadius": 4,
+        "showKnob": false
+    },
+
+    "bgColor": "#282828",
+    "altBgColor": "#1e1e1e",
+    "fgColor": "#eeeeee",
+    "accentColor": "#87af5f",
+
+    "font": "Departure Mono",
+    "fontSize": 10,
+    "fontBold": true
+}

@@ -1,0 +1,301 @@
+Project: Quickshell shell for linux
+Language: QML
+Current os: NixOs
+Current window manager: Mango
+
+Other details:
+  Heavily commented code, comments should make up a manual to understand the underlying code.
+  Heavy separation of concerns.
+  DRY code principles.
+
+Basic concept:
+  Replace common desktop bar and widget functionality with a pill shaped item that follows the mouse across screens and monitors.
+  Pill can display icons and text provided by modules.
+  Pill expands into Card on click.
+  Card houses  more detail version of modules and can display unlimited modules.
+  Modules provide the functionality (clock, task bar ecc.).
+
+Architecture:
+  A main script organises the project.
+  A theme script organises all the visual aspects shared across components.
+  A config script user oriented where options are collected.
+  A script that holds the logic for the pill/card.
+  A subfolder where modules scripts are collected.
+  
+  Each script where possible should have the following structure:
+    First on top collect all the tunable variables.
+    Then a section where functions related to getting data from outside quickshell (like getting data from linux or mango or other apps)
+    then the rest of the logic needed.
+
+  Pill and card should be as much system agnostic as possible. The mouse following behaviour poses a challenge in this sense as wayland doesn't expose a global mouse position so it needs to be extracted in an alternative way. We can separate the mouse following behaviour in a different script and collect there a number of ways to retrieve the info depending on the user configuration (like a list of functions to get global mouse position relative to the main window managers or desktop environments and the shell can match the appropriate function)
+
+  Modules can be more system speific (like specific mango related widget to check layout or workspace).
+  Modules should have the same structure so new modules can be easily created with some specifications.
+  Users shuld be able to create a module and drop it into the mdule folder and use it in the config by using its filename as a reference. (module clock from file ./modules/clock.qml)
+
+Specifics:
+  Modules:
+    Each modules can have 1 to 3 different layouts: icon, widget, card.
+    Right clicking a module expands it to it's card layout if it has any.
+    There is no middle click behaviour.
+    Left click is dependant on the module functionality.
+    Icon layout: the module displays as an icon or text or both.
+    Widget layout: displays as a widget that fits inside a card.
+    Card layout: replaces the content of the card with a bigger more functional widget (one widget per card as opposed to widget layout that you can fit more of in a card)
+
+  Pill/Cards:
+    Pills and cards should display above all other windows except for when in full screen mode.
+    Pill follows mouse by default, on hover it stops following, on click it expands into a card, on middle click toggles between following the mouse and staying in place, right click passes the click into whatever icon you're hovering on.
+    Once expanded in a card it stops following the mouse by default and but the behaviour can still be toggled on and off by middle click. If you click outside the card it collapses back into the pill unless "pinned" by a small button on its upper right corner.
+    Pill can house modules and display them only in icon mode.
+    Card displays icon modules in a sequence of rows while widget modules take up a whole row and whatever hight they need.
+    Cards are scrollable so an unlimited amount of moules can be fit inside.
+   Pill and Card each have a separate and independent list of modules so Pill can have clock module inside but card can be without
+   Duplicate modules in both the Pill and Card are allowed.
+
+Config:
+  Config values should be evaluated and if invalid fallback to default values rather than crashing. These are the minimum config expected, add more if there's the possibility.
+  The config should have 3 main section.
+    Pill/card behaviour:
+      Pill position : expressed as degrees from 0 to 360 where 0 is north of the mouse or expressed as whatever is easier so that the position relative to the mouse can be granular
+      Pill distance:  expressed in pixel distance from the mouse
+      Pill max distance: distance at wich the pill doesn't bother following the mouse
+      Pill delay: time to wait before following afrer the mouse has moved (or grace period where the pill doesn't care if the house has moved)
+      Pill speed: how fast it gets to it's target position, if 0 it teleports to its target position.
+      Pill accel: accelleration from still to
+      Card distance:  expressed in pixel distance from the mouse
+      Card max distance: distance at wich the card doesn't bother following the mouse
+      Card delay: time to wait before following afrer the mouse has moved (or grace period where the card doesn't care if the house has moved)
+      Card speed: how fast it gets to it's target position, if 0 it teleports to its target position.
+      Card accel: accelleration from still to speed
+
+    Pill/card modules:
+      Simple list of modules called by file name, the order of the modules reflect the order in the actual pill and card.
+      Card modules have an option of being displayed as icons or widgets if the modules provide for either.
+      Pill [module1,module2,module3]
+      In the card 0 is icon mode and 1 is widget mode.
+      Card [ module2 0,module4 1,module6 0,module1 0]
+
+    Modules options:
+        Modules also read from the config if they provide any. each module has it's own config layout.
+
+Themes:
+  Here's a list of the minimum theme options expected add more if possible
+  background color
+  background transparency
+  background blur
+  foreground color(text)
+  accent color
+  border color
+  font
+  font size
+  corner radius
+  border size
+  
+  
+Simple starter modules:
+  Clock:
+    Icon mode: simple clock (like 23:40)
+    Widget mode: bigger clock and date nice design
+    Card mode: top of card clock and date, under calendar
+    Config options: 
+      [clock]{
+              format: %H, 
+              date format: %d%m%Y, 
+              week starts from: monday
+         }
+  Mango windows:
+    Icon mode: icon list of the open windows.
+    Card mode: list of windows with icons and names divided  by monitors and subdivided by workspace(tags in mango)
+   Mango layout::
+     Icon mode: display icon of current layout
+     Card mode: list of available layouts click to change layout.
+    Config options: 
+      [mango_layout]{
+              icons:{ 
+                tile : "",
+                scroller: "",
+                monocle: "",
+                grid: "",
+                deck: "",
+                center_tile: "",
+                vertical_tile: "",
+                right_tile: "",
+                vertical_scroller: "",
+                vertical_grid: "",
+                vertical_deck: "",
+                dwindle: "",
+                fair: "",
+                vertical_fair: "",
+
+         }
+    Volume slider:
+        Widget mode: slider icon label to change the volume
+
+Enhance this prompt
+
+
+
+
+Here is an enhanced, highly structured, and rigorously defined version of your prompt.
+
+I have organized your requirements into a format that AI coding assistants (and human developers) can process much more effectively. I added strict architectural boundaries, explicit state definitions, and clear data structures for the configuration and theming.
+
+📋 Copy and Paste the Prompt Below:
+System Prompt / Context:
+You are an expert Linux Desktop customization engineer and a master of QML, Qt6, and Quickshell. You write incredibly clean, DRY (Don't Repeat Yourself), and modular code. Your code is heavily commented—so much so that the comments serve as a comprehensive manual explaining the underlying logic, Wayland quirks, and architecture to future developers.
+
+Project Overview:
+Create a custom desktop shell for NixOS running the Mango window manager using Quickshell (QML).
+The core concept is to replace standard static desktop panels with a floating, dynamic "Pill". The Pill follows the user's mouse pointer globally. It acts as a minimized dashboard for modules (clock, workspaces, etc.). Upon interaction, the Pill expands into a larger, scrollable "Card" that reveals detailed widgets and controls.
+
+1. Core Architecture & File Structure:
+Enforce strict separation of concerns. The project should be divided into the following file structure:
+
+main.qml: The entry point. Handles Wayland window instantiations (layer shell) and visual hierarchy.
+
+theme.js / Theme.qml: A centralized singleton for all shared visual aspects.
+
+config.js / Config.qml: User-facing configuration singleton with default fallbacks to prevent crashes on invalid user input.
+
+logic/MouseTracker.qml: An abstraction layer specifically for handling global mouse coordinates (crucial since Wayland isolates this). Must support modular backends depending on user config (e.g., polling a custom daemon, Mango IPC, or ydotool).
+
+logic/Kinematics.js: Handles the math for the delay, speed, and acceleration of the Pill/Card moving to the target position.
+
+modules/: A directory containing independent QML files for each module (e.g., Clock.qml).
+
+2. Standardized Script/Module Structure:
+Every QML/JS file must follow this strict top-to-bottom layout:
+
+Properties & Tunable Variables: All customizable QML properties at the very top.
+
+Data Retrieval Functions: Functions bridging QML to Linux/Mango/System APIs (via Quickshell's Process or custom scripts).
+
+Internal Logic & State: The core mechanics of the component.
+
+UI Components: The visual QML elements.
+
+3. UI/UX Mechanics (Pill & Card):
+The shell operates in two primary visual states, behaving as an overlay (above other windows, except fullscreen):
+
+The Pill (State 1):
+
+Visual: A small, pill-shaped floating container. Displays modules in Icon mode only.
+
+Movement: Follows the mouse based on polar coordinates (angle/distance) defined in the config.
+
+Interactions:
+
+Hover: Pauses following the mouse.
+
+Left Click: Expands into the Card state.
+
+Middle Click: Toggles mouse-following behavior on/off permanently.
+
+Right Click: Passes the click down to the specific hovered module icon.
+
+The Card (State 2):
+
+Visual: An expanded, scrollable panel. Can display an unlimited number of modules.
+
+Layout: Icon modules are arranged in rows (flow layout). Widget modules take up an entire row and expand to their required height.
+
+Movement: By default, stops following the mouse once expanded.
+
+Interactions:
+
+Click Outside: Collapses back into the Pill state.
+
+Pin Button (Top Right): Prevents collapsing when clicking outside.
+
+Middle Click: Re-enables mouse-following behavior while in Card mode.
+
+Note: The Pill and Card have separate, independent arrays of loaded modules (duplicate modules across both are allowed).
+
+4. Module API Standard:
+All files dropped into modules/ must conform to a standardized interface so they can be loaded dynamically by filename.
+
+Each module must support up to 3 layouts, exposed via a state or displayMode property:
+
+Icon: Minimalist. Text/Icon only (fits in Pill or inline Card row). Left-click triggers module-specific action.
+
+Widget: Detailed view. Fits inside a standard Card row.
+
+Card: Full takeover. Right-clicking a module's Icon or Widget expands it to replace the current Card content entirely with its own mega-widget.
+
+No middle-click actions on modules (reserved for Pill/Card movement toggling).
+
+5. Configuration Schema Expected (Implement robust parsing with fallbacks):
+
+JSON
+{
+  "behavior": {
+    "pill": {
+      "angleDegrees": 0, // 0 is directly above the cursor
+      "distancePx": 40,
+      "maxDistancePx": 800, // Distance at which pill stops trying to catch up
+      "delayMs": 100, // Grace period before movement starts
+      "speed": 5.0, // 0 = instant teleport
+      "acceleration": 1.2
+    },
+    "card": {
+      "distancePx": 20,
+      "maxDistancePx": 0, // e.g., 0 means it doesn't follow
+      "delayMs": 0,
+      "speed": 0,
+      "acceleration": 0
+    }
+  },
+  "layout": {
+    "pillModules": ["Clock", "MangoLayout", "Volume"],
+    "cardModules": [
+      {"name": "MangoLayout", "mode": "icon"},
+      {"name": "Volume", "mode": "widget"},
+      {"name": "MangoWindows", "mode": "widget"},
+      {"name": "Clock", "mode": "icon"}
+    ]
+  },
+  "moduleSettings": { /* See specific module configs below */ }
+}
+6. Theme Schema Expected:
+
+backgroundColor, backgroundTransparency, backgroundBlur (Quickshell blur properties)
+
+foregroundColor (text), accentColor, borderColor
+
+fontFamily, fontSize
+
+cornerRadius, borderSize
+
+7. Required Starter Modules & Specifics:
+
+Clock (Clock.qml):
+
+Icon Mode: Simple text (e.g., "23:40").
+
+Widget Mode: Larger clock with stylized date.
+
+Card Mode: Top section clock/date, bottom section full calendar grid.
+
+Config: {"format": "%H:%M", "dateFormat": "%d%m%Y", "weekStartsOn": "monday"}
+
+Mango Windows (MangoWindows.qml):
+
+Icon Mode: Horizontal list of icons representing currently open windows.
+
+Card Mode: Grouped list of windows with icons + titles, separated by monitor, subdivided by Mango tags/workspaces.
+
+Mango Layout (MangoLayout.qml):
+
+Icon Mode: Single icon displaying the current active Mango layout.
+
+Card Mode: Grid list of available layouts. Clicking one changes the WM layout via Mango's IPC/CLI.
+
+Config: Requires an icons dictionary mapping Mango layout names (tile, scroller, monocle, grid, deck, center_tile, vertical_tile, right_tile, vertical_scroller, vertical_grid, vertical_deck, dwindle, fair, vertical_fair) to font-icons/SVG paths.
+
+Volume Slider (Volume.qml):
+
+Widget Mode: An icon and a horizontal slider to control system volume (via wpctl or pamixer).
+
+Task:
+Begin by outputting the main.qml, theme.js, config.js, and the Kinematics/MouseTracker logic. Ensure the code is production-ready, defensively programmed against null values, and relies on standard QML/Quickshell paradigms.

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wpctl status *)",
+      "Bash(wpctl inspect *)",
+      "Bash(wpctl get-volume *)",
+      "Bash(pw-cli --help)"
+    ]
+  }
+}

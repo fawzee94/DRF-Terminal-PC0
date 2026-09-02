@@ -38,7 +38,7 @@ matches:
     replace: "sudo nixos-rebuild boot --impure"
     
   - trigger: ":nixstow"
-    replace: "stow -d ~/dotfiles -t ~ configs"
+    replace: "stow -d ~/dotfiles -t /etc/nixos system_configs"
     
   - trigger: ":homestow"
-    replace: "stow -d ~/dotfiles -t /etc/nixos system_configs"
+    replace: "stow -d ~/dotfiles -t ~ configs"

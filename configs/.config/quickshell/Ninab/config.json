@@ -1,0 +1,73 @@
+{
+    "pill": {
+        "angleDegrees": 90,
+        "angleFree": true,
+        "distancePx": 100,
+        "maxDistancePx": 100,
+        "alignment": "center"
+    },
+    "card": {
+        "angleDegrees": 360,
+        "angleFree": true,
+        "distancePx": 160,
+        "maxDistancePx": 160
+    },
+
+    "speed": 0.5,
+    "accel": 0.1,
+
+    "system": {
+        "cursorPollIntervalMs": 95,
+        "cursorIdleIntervalMs": 400,
+        "cursorIdleAfterTicks": 5,
+        "audioPollIntervalMs": 2000,
+        "networkPollIntervalMs": 2000,
+        "pingIntervalMs": 5000,
+        "pingHost": "1.1.1.1",
+        "audioSink": "@DEFAULT_AUDIO_SINK@",
+        "micSink": "@DEFAULT_AUDIO_SOURCE@"
+    },
+
+    "pillModules": ["clock", "volume", "network"],
+    "cardModules": [
+        {"name": "clock", "mode": "widget"},
+        {"name": "volume", "mode": "widget"},
+        {"name": "network", "mode": "widget"}
+    ],
+    "moduleSettings": {
+        "volume": {
+            "sliders": [
+                {
+                    "id": "volume",
+                    "icon": "",
+                    "mutedIcon": "",
+                    "label": "Volume",
+                    "labelIcon": ""
+                },
+                {
+                    "id": "mic",
+                    "icon": "",
+                    "mutedIcon": "",
+                    "label": "Microphone",
+                    "labelIcon": ""
+                }
+            ],
+            "apps": {
+                "enabled": true,
+                "label": "Applications",
+                "labelIcon": "",
+                "icon": "",
+                "mutedIcon": ""
+            }
+        },
+        "network": {
+            "label": "Network",
+            "labelIcon": "",
+            "icons": {
+                "wifi": "",
+                "ethernet": "",
+                "disconnected": ""
+            }
+        }
+    }
+}
