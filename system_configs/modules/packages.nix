@@ -124,6 +124,13 @@
     # AI
     claude-code
 
+    # ---- Runtimes ----
+    # Required by claude-code plugin hooks (claude-mem, security-guidance).
+    # The claude-code derivation wraps its own node but doesn't expose it,
+    # so hooks calling `node`/`python3` need these on PATH.
+    nodejs
+    python3
+
     # ---- Other ----
     # Torrent client
     transmission_4-gtk

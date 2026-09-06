@@ -9,6 +9,9 @@ undo_backspace: true
 # Set key toggle (e.g., press ALT twice to pause/resume Espanso)
 toggle_key: ALT
 
+# Reload config after edits
+auto_restart: true
+
 search_shortcut: off
 
 search_trigger: ":esp"
@@ -17,3 +20,4 @@ show_icon: true
 
 keyboard_layout:
   layout: "gb"
+

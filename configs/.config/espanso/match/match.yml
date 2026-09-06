@@ -27,6 +27,13 @@ matches:
   - trigger: ":tdate"
     replace: "{{today}} {{now}}"
 
+  # Places
+  - trigger: ":dotfiles"
+    replace: "~/dotfiles"
+
+  - trigger: ":ninab"
+    replace: "~/dotfiles/configs/.config/quickshell/Ninab"
+
   # Commands
   - trigger: ":figlet"
     replace: "figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"

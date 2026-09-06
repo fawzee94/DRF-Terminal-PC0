@@ -1,0 +1,179 @@
+Nino — Project Vision
+=====================
+
+What this document is: the *what* and *why*, in user terms. No implementation.
+If you are asking "how does X talk to Y", you want docs/architecture.md instead.
+
+Target platform
+---------------
+  OS:               NixOS
+  Window manager:   Mango
+  Runtime:          Quickshell (QML / Qt6)
+
+Nino should be as system-agnostic as it can be. Where it can't (cursor position,
+audio, window lists), the system-specific part is isolated so porting Nino to a
+different compositor means editing a known, small set of files.
+
+
+The concept
+-----------
+Replace the conventional desktop bar with a pill-shaped widget that follows the
+mouse across screens and monitors, and expands into a card on click.
+
+It is for people bored by the usual bar setups. Its distinguishing traits, in
+order of importance:
+
+  1. It follows the cursor across monitors. A Nino is one thing that travels, not
+     one copy per screen, and it goes where you are looking.
+  2. It has states. It is not a static strip of text — it is a pill, or a card, or a bar,
+     or a full-takeover view of a single module, and it moves between them.
+  3. It is extendable. Modules are drop-in files. A user writes one, drops it in,
+     names it in the config, and it works.
+  4. Multiple Nino can be spawned each with his id and separate config.
+
+
+The visual states
+---------------------
+
+THE PILL — the resting state.
+  Displays modules in icon mode and compact widget mode only.
+  Positioned relative to the cursor by angle and distance.
+  Does not expand or scroll: modules that overflow are cut off, not wrapped.
+  Where that position falls off every monitor — near a screen edge, or in the dead
+  space of a non-rectangular layout — the pill slides along the nearest screen's
+  edge rather than flipping sides or disappearing. It stays visible, always.
+
+    Hover         pauses following
+    Left click(on icon module)    expands into the card
+    Left click(on widget module)  passes the click to the module
+    Middle click  toggles mouse-following on/off
+    Right click   expands the module takeover view if it has one
+
+THE CARD — the expanded state.
+  Scrollable, so it can hold an unlimited number of modules.
+  Icon modules flow in rows; widget modules take a full row at whatever height
+  they need.
+
+    Collapse       Collapses back into a pill or bar if the mouse wonders too far from it
+    Pin button      (top-right corner) prevents that collapse
+    Middle click    toggles mouse-following on/off
+    Right click(card overview provided by Nino)   expands the module takeover view if it has one
+    Right click(card takeover provided by modules)   expands click is consumed by the module ui
+
+
+THE BAR —the regular bar state
+  Displays modules in icon mode and compact widget mode only.
+  Shares modules with the pill but has a fixed position on the screen like regular bars.
+  Like the pill does not expand or scroll: modules that overflow are cut off, not wrapped.
+  Does not follow the mouse. It may sit small and extend when the cursor comes near.
+  Expanding it into the card keeps the card anchored too — the bar's card does not
+  drift off to the cursor.
+  It can reserve its own space, so windows do not cover it. Off by default.
+
+
+All draw above all other windows, except over fullscreen windows.
+
+The pill and the card have separate, independent module lists. The pill may show
+the clock while the card does not. Duplicates across the two are allowed.
+The pill and bar share one module list.
+
+
+Modules
+-------
+A module provides one piece of functionality (clock, task bar, volume). It is a
+single drop-in file, referenced in the config by name.
+
+Each module offers one to three views:
+
+  ICON    minimal — an icon, or text, or both. Fits in the pill or in a card row.
+          Left click does something module-specific.
+  WIDGET  a detailed view. The host decides how much height it gets: a full card
+          row in the card, or a compact strip in the pill or the bar — a volume
+          module's widget is a slider and an icon there, the full mixer in a card.
+          A module states the least height its widget can survive in; a host that
+          cannot give it that much shows the ICON instead. Full-size widgets
+          therefore only ever appear in the card, which is the intent.
+  CARD    a full takeover — replaces the entire card body with one large view.
+          Reached by right-clicking that module's icon or widget.
+
+Middle click is never a module action; it belongs to Nino's follow toggle.
+
+Modules may be system-specific where the pill and card may not — a Mango
+workspace module is expected to know about Mango.
+
+
+Configuration
+-------------
+User-facing, and forgiving: an invalid value falls back to a default rather than
+crashing. Three sections.
+
+  0. INSTANCES — each Nino has an id and its own copy of everything below. One
+     file holds them all; global settings that make no sense per-Nino live outside
+     the instance list.
+
+  1. PILL / CARD BEHAVIOUR — independent settings for each, both cursor-relative:
+
+       position       where it sits relative to the cursor, as an angle
+       distance       how far from the cursor, in pixels
+       max distance   how far the cursor may stray before Nino repositions
+       delay          grace period before it starts following
+       speed          how fast it reaches its target; 0 means teleport
+       acceleration   how it ramps from still to speed
+
+     BAR BEHAVIOUR — anchored instead, so it takes its own set:
+
+       screen         which monitor it lives on
+       edge           which side of that monitor
+       alignment      where along that edge, and how much of it it takes
+       reveal         how near the cursor must come to extend it, if it hides
+       reserve space  whether windows are kept off it; off by default
+
+  2. PILL / CARD MODULES — an ordered list of module names; the order is the
+     on-screen order. The bar uses the pill's list. Card entries additionally
+     choose icon or widget mode.
+
+  3. MODULE OPTIONS — each module reads its own settings block, with its own
+     shape, defined by that module.
+
+
+Theming
+-------
+All shared visual values live in one place, so components never hardcode looks.
+At minimum:
+
+  background colour, transparency, blur
+  foreground (text) colour, accent colour, border colour
+  font family, font size
+  corner radius, border size
+
+
+Starter modules
+---------------
+
+  CLOCK
+    icon    a simple clock (23:40)
+    widget  a larger clock with a styled date
+    card    clock and date on top, calendar below
+    config  time format, date format, first day of week
+
+  MANGO WINDOWS
+    icon    a list of open-window icons
+    card    windows with icons and names, grouped by monitor, subgrouped by tag
+
+  MANGO LAYOUT
+    icon    the current layout's icon
+    card    the available layouts; click one to switch
+    config  an icon per layout name (tile, scroller, monocle, grid, deck,
+            center_tile, vertical_tile, right_tile, vertical_scroller,
+            vertical_grid, vertical_deck, dwindle, fair, vertical_fair)
+
+  VOLUME
+    widget  an icon and a slider to set system volume
+
+
+Non-negotiables
+---------------
+  Heavy separation of concerns. One file, one job.
+  DRY.
+  Comments that read as a manual — they explain why, not what.
+  Readability first, with an eye on performance.
