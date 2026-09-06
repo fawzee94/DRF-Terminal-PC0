@@ -130,6 +130,20 @@
     # so hooks calling `node`/`python3` need these on PATH.
     nodejs
     python3
+    # claude-mem's worker daemon uses the bun:sqlite API, which only Bun
+    # provides - node cannot substitute for it.
+    bun
+
+    # ---- Plugin tools ----
+    # Not needed at session start like the runtimes above - these are shelled
+    # out to on demand, so a missing one only breaks the skill that calls it.
+    # PR review workflows: /code-review <PR#>, receiving-code-review,
+    # babysit, standup, oh-my-issues.
+    gh
+    # JSON parsing in the babysit, oh-my-issues and wowerpoint skills.
+    jq
+    # `dot`, for rendering diagrams when authoring superpowers skills.
+    graphviz
 
     # ---- Other ----
     # Torrent client
