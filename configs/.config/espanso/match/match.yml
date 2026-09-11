@@ -33,7 +33,9 @@ matches:
 
   - trigger: ":ninab"
     replace: "~/dotfiles/configs/.config/quickshell/Ninab"
-
+    
+  - trigger: ":claude"
+    replace: "~/Claude"
   # Commands
   - trigger: ":figlet"
     replace: "figlet -f /home/fwz/dotfiles/assets/fonts/figlet/DRF.flf"
@@ -49,3 +51,5 @@ matches:
     
   - trigger: ":homestow"
     replace: "stow -d ~/dotfiles -t ~ configs"
+
+
