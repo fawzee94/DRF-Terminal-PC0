@@ -35,7 +35,6 @@
   services.ollama = {
     enable = true;
     package = pkgs.ollama-cuda; # Forces CUDA build instead of CPU
-    acceleration = "cuda";     # Explicit GPU offloading target
   };
   
   # ---- Machine exclusive packages --------------------------------------
