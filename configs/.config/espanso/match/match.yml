@@ -52,4 +52,6 @@ matches:
   - trigger: ":homestow"
     replace: "stow -d ~/dotfiles -t ~ configs"
 
-
+  # Temp
+  - trigger: ":Nino"
+    replace: "quickshell --config ~/Claude/Nino"

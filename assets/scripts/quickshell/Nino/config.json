@@ -1,0 +1,221 @@
+
+{
+  # Default Theme
+  "background": "#66282828",
+  "radius": 16,
+  "borderWidth": 0.5,
+  "accent": "#87af5f",
+  "text": "#ffcdd6f4",
+  "padding": 5,
+  "gap": 6,
+  "bold": false,
+  "font": "Departure Mono",
+  "fontSize": 12,
+
+  # System
+  "cursorPollIntervalMs": 10,
+  "audioPollIntervalMs": 200,
+
+  # Instances
+  "instances": [
+    {
+      "id": "nino1",
+      "restingMode": "pill",
+      "animationSet": "Default",
+      "cycleModes": ["dot","pill"],
+
+      "dot": {
+        "angle": "free",
+        "targetDistance": 23,
+        "size":15,
+        "module": null,
+        "moduleOptions": {
+          "timeFormat": "hh:mm",
+          # A bare name is the whole command; the long form carries a value.
+          "clicks": { "left": "copyDate", "right": { "command": "takeover" } }
+        },
+
+        # Inherits from the top-level theme. Override any of:
+        #   background, radius, borderWidth, accent, text, padding, font, fontSize
+        "radius": 16,
+
+      },
+
+      "pill": {
+        "angle": "free",
+        "targetDistance": 35,
+        "width": 120,
+        "height": 30,
+        "deadzone": 40,
+        "delayMs": 0,
+        "speed": 6,
+        "easeMs": 20,
+        "minMoveMs": 150,
+
+        # What a click anywhere on this mode does when the module under it
+        # claims nothing. A bare name is the whole command; the long form
+        # carries a value. An omitted button does nothing.
+        # Commands: close, collapse, back, togglePin, toggleFollow,
+        # cycleModes, and switchMode/setPinned/takeover with a value.
+        "clicks": {
+          "right": { "command": "switchMode", "value": "card" },
+          "middle": "toggleFollow"
+        },
+
+        # Inherits from the top-level theme. Override any of:
+        #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+
+        "moduleAlignment": {
+          "horizontal": "center",
+          "vertical": "center"
+        },
+        "modules": [
+          { "id": "pillClock", "module": "Clock" },
+          { "id": "pillVolume", "module": "Volume" }
+        ],
+        "moduleOptions": {
+          "pillClock": {
+            "view": "icon",
+            "dateFormat": "ddd, MMM d",
+            "timeFormat": "hh:mm",
+            "clicks": { "left": "copyDate", "right": { "command": "takeover", "value": "pillClock" } }
+          },
+          "pillVolume": {
+            "view": "widget"
+          }
+        }
+      },
+
+      "bar": {
+        "screen": "current",
+        "edge": "top",
+        "edgeMargin": 5,
+        "alignment": "center",
+        "width": 350,
+        "height": 30,
+        "collapsedWidth": 100,
+        "collapsedHeight": 30,
+        "revealDistance": 40,
+
+        "clicks": { "right": { "command": "switchMode", "value": "card" } },
+
+        # Inherits from the top-level theme. Override any of:
+        #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+
+        "moduleAlignment": {
+          "horizontal": "center",
+          "vertical": "center"
+        },
+        "modules": [
+          { "id": "barClock", "module": "Clock" },
+          { "id": "barVolume", "module": "Volume" }
+        ],
+        "moduleOptions": {
+          "barClock": {
+            "view": "widget",
+            "dateFormat": "ddd, MMM d",
+            "timeFormat": "hh:mm",
+            "clicks": { "left": "copyDate", "right": { "command": "takeover", "value": "barClock" } }
+          },
+          "barVolume": {
+            "view": "widget"
+          }
+        }
+      },
+
+      "card": {
+        "angle": "free",
+        "targetDistance": 40,
+        "collapseDistance": 40,
+        "width": 160,
+        "height": 200,
+        "deadzone": 40,
+        "delayMs": 10,
+        "speed": 3,
+        "easeMs": 20,
+        "minMoveMs": 150,
+
+        "clicks": {
+          "right": "collapse",
+          "middle": "toggleFollow",
+          "left": "togglePin"
+        },
+
+        # Inherits from the top-level theme. Override any of:
+        #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+        "padding": 15,
+
+        "moduleAlignment": {
+          "horizontal": "left"
+        },
+        "modules": [
+          { "id": "cardControls", "module": "ControlBar" },
+          { "id": "cardClock", "module": "Clock" },
+          { "id": "cardVolume", "module": "Volume" },
+          { "id": "cardsClock", "module": "Clock" },
+          { "id": "cardsVolume", "module": "Volume" },
+          { "id": "cardClock2", "module": "Clock" }
+        ],
+        "moduleOptions": {
+          "cardControls": { "buttons": ["pin", "dashboard", "close"] },
+          "cardClock": { "view": "widget" },
+          "cardVolume": { "view": "widget" },
+          "cardsClock": { "view": "icon" },
+          "cardsVolume": { "view": "icon" },
+          "cardClock2": { "view": "takeover" }
+        }
+      },
+
+      "dashboard": {
+        "columns": 7,
+        "rows": 5,
+        "padding": 50,
+
+        "clicks": { "middle": "back" },
+        
+
+        "cards": [
+          {
+            "id": "card1",
+            "col": 3,
+            "row": 0,
+            "w": 1,
+            "h": 1,
+            "iconSize": 24,
+
+            # Inherits from the top-level theme. Override any of:
+            #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+
+            "moduleAlignment": {
+              "horizontal": "center"
+            },
+            "modules": [
+              { "id": "card1Clock", "module": "Clock" },
+              { "id": "card1Volume", "module": "Volume" }
+            ],
+            "moduleOptions": {"card1Clock": { "view": "takeover" }, "card1Volume": { "view": "widget" }}
+          },
+          {
+            "id": "card2",
+            "col": 2,
+            "row": 0,
+            "w": 1,
+            "h": 1,
+            "iconSize": 24,
+
+            # Inherits from the top-level theme. Override any of:
+            #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+
+            "moduleAlignment": {
+              "horizontal": "center"
+            },
+            "modules": [
+              { "id": "card2Clock", "module": "Clock" }
+            ],
+            "moduleOptions": {"card2Clock": { "view": "takeover" }}
+          }
+        ]
+      }
+    }
+  ]
+}
