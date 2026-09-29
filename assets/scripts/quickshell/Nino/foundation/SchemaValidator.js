@@ -110,10 +110,10 @@ function coerceToObject(rawValue, path) {
   return {};
 }
 
-// Leaves first. Inheritable values are the root object's own leaf fields, so
-// resolving leaves ahead of nested objects means an `inherits` anywhere in
-// the tree always reads a finished value — without depending on where the
-// field happens to sit in the schema file.
+// Leaves first. Inheritable values are leaf fields, so resolving leaves ahead
+// of nested objects means an `inherits` anywhere in the tree always reads a
+// finished value — without depending on where the field happens to sit in the
+// schema file.
 function orderedFieldKeys(fields) {
   const keys = Object.keys(fields);
   return keys.filter(k => isLeafNode(fields[k])).concat(keys.filter(k => !isLeafNode(fields[k])));
@@ -125,20 +125,28 @@ function applyKnownFields(fields, source, path, root, target) {
   }
 }
 
-// An inherited key is validated by the top-level node's own rule, but falls
-// back to whatever that top level resolved to rather than to a restated
-// literal. Omitting the key is how you inherit it.
-function applyInheritedFields(inherits, source, path, root, target) {
-  for (const key of inherits) {
-    const topNode = (root.schema.fields || {})[key];
-    if (!topNode) {
-      warn(joinPath(path, key), `inherits "${key}", which is not a top-level field`);
+// Where an inherited key is looked up: the node that declares its rule, and
+// the object that resolved it. Two of these exist — the top level, for theme,
+// and the enclosing instance, for the motion keys every mode shares.
+function topScope(root) {
+  return { label: 'top-level', schema: root.schema, data: root.data };
+}
+
+// An inherited key is validated by the owning scope's own rule, but falls back
+// to whatever that scope resolved to rather than to a restated literal.
+// Omitting the key is how you inherit it.
+function applyInherited(keys, scope, source, path, root, target) {
+  for (const key of keys) {
+    const node = scope ? (scope.schema.fields || {})[key] : undefined;
+    if (!node) {
+      warn(joinPath(path, key),
+        `inherits "${key}", which is not a ${scope ? scope.label : 'reachable'} field`);
       continue;
     }
-    const topValue = root.data[key];
+    const inherited = scope.data[key];
     target[key] = isAbsent(source[key])
-      ? topValue
-      : validate(Object.assign({}, topNode, { default: topValue }), source[key], joinPath(path, key), root);
+      ? inherited
+      : validate(Object.assign({}, node, { default: inherited }), source[key], joinPath(path, key), root);
   }
 }
 
@@ -160,13 +168,26 @@ function validateObject(schemaNode, rawValue, path, root) {
   const source = coerceToObject(dereference(rawValue, path, root), path);
   const fields = schemaNode.fields || {};
   const inherits = schemaNode.inherits || [];
+  const fromInstance = schemaNode.inheritsFromInstance || [];
   // Identity, not structure: only the outermost node accumulates straight
-  // into root.data, which is what lets applyInheritedFields read resolved
+  // into root.data, which is what lets applyInherited read resolved
   // top-level values out of it.
   const target = root.schema === schemaNode ? root.data : {};
+
+  // Published before this node's own fields resolve, not after: `data` is the
+  // very object those fields accumulate into, so a mode nested inside reads a
+  // filled one by the time it asks. Ordering is the leaves-first rule above
+  // and nothing more.
+  if (schemaNode.scope) {
+    root.scopes = root.scopes || {};
+    root.scopes[schemaNode.scope] = { label: schemaNode.scope, schema: schemaNode, data: target };
+  }
   applyKnownFields(fields, source, path, root, target);
-  applyInheritedFields(inherits, source, path, root, target);
-  applyAdditionalFields(schemaNode.additional, Object.keys(fields).concat(inherits), source, path, root, target);
+
+  applyInherited(inherits, topScope(root), source, path, root, target);
+  applyInherited(fromInstance, (root.scopes || {}).instance, source, path, root, target);
+  applyAdditionalFields(schemaNode.additional,
+    Object.keys(fields).concat(inherits).concat(fromInstance), source, path, root, target);
   return target;
 }
 

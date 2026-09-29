@@ -8,6 +8,26 @@ import "instance"
 // blocks, module lists and click config are all resolved further down, at
 // the level that needs them.
 ShellRoot {
+    // Shell-level, so its own target rather than one registration per Nino:
+    // there is one config and one process however many Ninos are configured,
+    // and registering these against `nino1` and `nino2` alike would list the
+    // same global action twice and imply a choice that does not exist. For
+    // the same reason they are not part of the click vocabulary — Pose
+    // resolves those, and Pose is per Nino.
+    IpcHandler {
+        target: "shell"
+
+        // Re-reads config.json without waiting for a watch event, which is
+        // also the only way to pick up an edited split file short of
+        // touching config.json.
+        function reloadConfig(): void { Config.reload(); }
+
+        // The whole shell, torn down and built again. Hard rather than soft
+        // because the soft form reuses what it can, and the reason to ask
+        // for this at all is to stop reusing anything.
+        function restart(): void { Quickshell.reload(true); }
+    }
+
     Variants {
         // Keyed by id rather than by the instance objects. A config reload
         // rebuilds the whole tree, so a model of objects looks entirely new
@@ -51,6 +71,7 @@ ShellRoot {
                 function cycleModes(): void { ninoPose.cycleModes(); }
                 function takeover(module: string): void { ninoPose.takeover(module); }
                 function toggleFollow(): void { ninoPose.toggleFollow(); }
+                function toggleAngle(): void { ninoPose.toggleAngle(); }
                 function collapse(): void { ninoPose.collapse(); }
                 function back(): void { ninoPose.back(); }
             }

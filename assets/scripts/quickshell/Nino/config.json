@@ -3,7 +3,7 @@
   # Default Theme
   "background": "#66282828",
   "radius": 16,
-  "borderWidth": 0.5,
+  "borderWidth": 1,
   "accent": "#87af5f",
   "text": "#ffcdd6f4",
   "padding": 5,
@@ -13,19 +13,27 @@
   "fontSize": 12,
 
   # System
-  "cursorPollIntervalMs": 10,
+  "cursorPollIntervalMs": 16,
   "audioPollIntervalMs": 200,
 
   # Instances
   "instances": [
     {
       "id": "nino1",
-      "restingMode": "pill",
+      "restingMode": "dot",
+
+      # How this Nino moves. A mode overrides only what it wants different.
+      "defaultAngle": "free",
+      "angleDegrees": 0,
+      "deadzone": 0,
+      "delayMs": 0,
+      "speed": 0,
+      "easeMs": 20,
+      "minMoveMs": 150,
       "animationSet": "Default",
-      "cycleModes": ["dot","pill"],
+      "cycleModes": ["dot","pill", "bar"],
 
       "dot": {
-        "angle": "free",
         "targetDistance": 23,
         "size":15,
         "module": null,
@@ -42,15 +50,18 @@
       },
 
       "pill": {
-        "angle": "free",
         "targetDistance": 35,
-        "width": 120,
+        "deadzone": 35,
+
+        # Shrink-in-place, off until revealDistance is set. 0 on an axis means
+        # it does not shrink on that one. Only a *parked* pill can show it —
+        # a following one holds the cursor at targetDistance forever.
+        "revealDistance": 20,
+        "collapsedWidth": 70,
+        "collapsedHeight": 30,
+
+        "width": 150,
         "height": 30,
-        "deadzone": 40,
-        "delayMs": 0,
-        "speed": 6,
-        "easeMs": 20,
-        "minMoveMs": 150,
 
         # What a click anywhere on this mode does when the module under it
         # claims nothing. A bare name is the whole command; the long form
@@ -58,6 +69,7 @@
         # Commands: close, collapse, back, togglePin, toggleFollow,
         # cycleModes, and switchMode/setPinned/takeover with a value.
         "clicks": {
+          "left": { "command": "switchMode", "value": "card" },
           "right": { "command": "switchMode", "value": "card" },
           "middle": "toggleFollow"
         },
@@ -71,17 +83,22 @@
         },
         "modules": [
           { "id": "pillClock", "module": "Clock" },
-          { "id": "pillVolume", "module": "Volume" }
+          { "id": "pillVolume", "module": "Volume" },
+          { "id": "pillLauncher", "module": "Launcher" }
         ],
         "moduleOptions": {
           "pillClock": {
             "view": "icon",
             "dateFormat": "ddd, MMM d",
             "timeFormat": "hh:mm",
-            "clicks": { "left": "copyDate", "right": { "command": "takeover", "value": "pillClock" } }
+            "clicks": {"right": { "command": "takeover", "value": "pillClock" } }
           },
           "pillVolume": {
             "view": "widget"
+          },
+          "pillLauncher": {
+            "view": "icon",
+            "clicks": { "left": { "command": "takeover", "value": "pillLauncher" } }
           }
         }
       },
@@ -91,13 +108,13 @@
         "edge": "top",
         "edgeMargin": 5,
         "alignment": "center",
-        "width": 350,
+        "width": 150,
         "height": 30,
-        "collapsedWidth": 100,
-        "collapsedHeight": 30,
-        "revealDistance": 40,
+        "collapsedWidth": 15,
+        "collapsedHeight": 15,
+        "revealDistance": 30,
 
-        "clicks": { "right": { "command": "switchMode", "value": "card" } },
+        "clicks": { "left": { "command": "switchMode", "value": "card" }, "right": { "command": "switchMode", "value": "card" } },
 
         # Inherits from the top-level theme. Override any of:
         #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
@@ -115,7 +132,7 @@
             "view": "widget",
             "dateFormat": "ddd, MMM d",
             "timeFormat": "hh:mm",
-            "clicks": { "left": "copyDate", "right": { "command": "takeover", "value": "barClock" } }
+            "clicks": {"right": { "command": "takeover", "value": "barClock" } }
           },
           "barVolume": {
             "view": "widget"
@@ -124,7 +141,6 @@
       },
 
       "card": {
-        "angle": "free",
         "targetDistance": 40,
         "collapseDistance": 40,
         "width": 160,
@@ -132,13 +148,10 @@
         "deadzone": 40,
         "delayMs": 10,
         "speed": 3,
-        "easeMs": 20,
-        "minMoveMs": 150,
 
         "clicks": {
-          "right": "collapse",
-          "middle": "toggleFollow",
-          "left": "togglePin"
+          "right": "close",
+          "middle": "toggleFollow"
         },
 
         # Inherits from the top-level theme. Override any of:
@@ -157,11 +170,11 @@
           { "id": "cardClock2", "module": "Clock" }
         ],
         "moduleOptions": {
-          "cardControls": { "buttons": ["pin", "dashboard", "close"] },
-          "cardClock": { "view": "widget" },
+          "cardControls": { "buttons": ["pin", "dashboard", "back", "close"] },
+          "cardClock": { "view": "widget", "clicks": {"right": { "command": "takeover", "value": "cardClock" }} },
           "cardVolume": { "view": "widget" },
           "cardsClock": { "view": "icon" },
-          "cardsVolume": { "view": "icon" },
+          "cardsVolume": { "view": "icon", "clicks": {"right": { "command": "takeover", "value": "cardsVolume" }} },
           "cardClock2": { "view": "takeover" }
         }
       },

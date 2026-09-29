@@ -26,25 +26,42 @@ Singleton {
         path: Quickshell.shellPath("config.json")
         watchChanges: true
         blockLoading: true
-        // reload() because watchChanges alone does not refresh text()
-        // (lore.md L33), and updateData() because the tree may need
-        // rebuilding even when this file's own text is unchanged — touching
-        // config.json is the documented way to pick up an edited split
-        // file, and that only works if a file event re-runs validation
-        // rather than a text change doing it.
-        onFileChanged: {
-            reload();
-            root.updateData();
-        }
+        // A watch event is one of the two ways a re-read is asked for; the
+        // reloadConfig command is the other, and both land on the same
+        // function so they cannot drift.
+        onFileChanged: root.reload()
     }
 
     // A split file is read once, when config.json is parsed. Only
     // config.json itself watches for changes, so editing a split file needs
-    // a restart or a touch of config.json — splitting is for organising a
-    // mostly-stable structure, not for tuning live.
+    // a reloadConfig or a touch of config.json — splitting is for organising
+    // a mostly-stable structure, not for tuning live.
     Component {
         id: splitFile
         FileView { blockLoading: true }
+    }
+
+    // A re-read was asked for — by a watch event or by the reloadConfig
+    // command. Not "the tree changed": `configFile.reload()` is asynchronous
+    // (`L33`), so at the moment this fires the new text has not arrived and
+    // whether it will even parse is unknowable here. Emitting it anyway is
+    // the honest reading, and a config that fails to parse says so in the
+    // log. It is deliberately not emitted on the first load, which is why it
+    // lives here rather than at the bottom of updateData().
+    signal reloaded()
+
+    // The whole re-read, named so a caller can ask for one without having to
+    // touch the file to fake a watch event.
+    //
+    // configFile.reload() because watchChanges alone does not refresh text()
+    // (lore.md L33), and updateData() because the tree may need rebuilding
+    // even when this file's own text is unchanged — re-reading config.json is
+    // how an edited split file is picked up, and that only works if the
+    // re-read re-runs validation rather than a text change doing it.
+    function reload() {
+        configFile.reload();
+        updateData();
+        reloaded();
     }
 
     readonly property var schema: ConfigParser.parseJson(schemaFile.text())

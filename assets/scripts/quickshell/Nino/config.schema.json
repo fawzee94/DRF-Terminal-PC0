@@ -26,10 +26,33 @@
       "idField": "id",
       "entry": {
         "type": "object",
+        # Declaring a scope publishes this block for anything nested to
+        # inherit from, the way the top level is for theme. A mode names what
+        # it wants in "inheritsFromInstance" and ignores the rest.
+        "scope": "instance",
         "fields": {
           "id": { "type": "string", "default": "" },
           "restingMode": { "type": "enum", "values": ["dot", "pill", "bar", "card", "dashboard"], "default": "dot" },
           "animationSet": { "type": "string", "default": "Default" },
+
+          # How this Nino moves, declared once. A mode overrides only what it
+          # wants different, and a mode that does not move names none of them.
+          # revealDistance and collapseDistance are 0 = off: both used to be
+          # opt-in by being declared at all, which stops working the moment
+          # every mode inherits a value.
+          # Split apart 2026-09-28: one key could not say "fixed, at 0 degrees"
+          # without 0 reading as a sentinel, and the toggle below needs a
+          # bearing to switch *to* while free is in force.
+          "defaultAngle": { "type": "enum", "values": ["free", "fixed"], "default": "free" },
+          "angleDegrees": { "type": "number", "min": 0, "max": 360, "wrap": true, "default": 0 },
+          "targetDistance": { "type": "number", "default": 25, "min": 0 },
+          "deadzone": { "type": "number", "default": 60, "min": 0 },
+          "delayMs": { "type": "number", "default": 0, "min": 0 },
+          "speed": { "type": "number", "default": 7, "min": 0 },  # thousands of px/s
+          "easeMs": { "type": "number", "default": 120, "min": 0 },
+          "minMoveMs": { "type": "number", "default": 150, "min": 0 },
+          "revealDistance": { "type": "number", "default": 0, "min": 0 },
+          "collapseDistance": { "type": "number", "default": 0, "min": 0 },
 
           # Order for the cycleModes command. Omit it and every mode this
           # instance declares is cycled, in the order they appear here.
@@ -39,14 +62,13 @@
             "type": "object",
             # No gap: Dot holds a single module, so there is nothing to space.
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "font", "fontSize"],
+            "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs"],
             "fields": {
               "draggable": { "type": "bool", "default": false },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "fixed" },
               "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "single" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "cursor" },
-              "angle": { "type": "number", "min": 0, "max": 360, "wrap": true, "literal": ["free"], "default": "free" },
-              "targetDistance": { "type": "number", "default": 15, "min": 0 },
               "size": { "type": "number", "default": 10, "min": 0 },
               "module": { "type": "string", "default": "" },
               "moduleOptions": { "type": "opaque" }
@@ -56,6 +78,7 @@
           "pill": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
+            "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "revealDistance", "collapseDistance"],
             "fields": {
               "draggable": { "type": "bool", "default": true },
               "clicks": { "type": "opaque" },
@@ -63,15 +86,14 @@
               "iconSize": { "type": "number", "default": 24, "min": 1 },
               "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "autoflow" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "cursor" },
-              "angle": { "type": "number", "min": 0, "max": 360, "wrap": true, "literal": ["free"], "default": "free" },
-              "targetDistance": { "type": "number", "default": 25, "min": 0 },
               "width": { "type": "number", "default": 140, "min": 0 },
               "height": { "type": "number", "default": 30, "min": 0 },
-              "deadzone": { "type": "number", "default": 60, "min": 0 },
-              "delayMs": { "type": "number", "default": 0, "min": 0 },
-              "speed": { "type": "number", "default": 7, "min": 0 },  # thousands of px/s
-              "easeMs": { "type": "number", "default": 120, "min": 0 },
-              "minMoveMs": { "type": "number", "default": 150, "min": 0 },
+              # 0 on an axis means it does not shrink on that one.
+              # revealDistance is what drives them, and on a cursor mode only
+              # a parked one can show it: a following pill holds the cursor at
+              # targetDistance forever.
+              "collapsedWidth": { "type": "number", "default": 0, "min": 0 },
+              "collapsedHeight": { "type": "number", "default": 0, "min": 0 },
 
               "moduleAlignment": {
                 "type": "object",
@@ -103,6 +125,7 @@
           "bar": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
+            "inheritsFromInstance": ["deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "revealDistance"],
             "fields": {
               "draggable": { "type": "bool", "default": false },
               "clicks": { "type": "opaque" },
@@ -116,9 +139,8 @@
               "alignment": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
               "width": { "type": "number", "default": 300, "min": 0 },
               "height": { "type": "number", "default": 30, "min": 0 },
-              "collapsedWidth": { "type": "number", "default": 250, "min": 0 },
+              "collapsedWidth": { "type": "number", "default": 0, "min": 0 },
               "collapsedHeight": { "type": "number", "default": 30, "min": 0 },
-              "revealDistance": { "type": "number", "default": 40, "min": 0 },
 
               "moduleAlignment": {
                 "type": "object",
@@ -150,6 +172,7 @@
           "card": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
+            "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "collapseDistance"],
             "fields": {
               "draggable": { "type": "bool", "default": true },
               "clicks": { "type": "opaque" },
@@ -157,16 +180,8 @@
               "iconSize": { "type": "number", "default": 24, "min": 1 },
               "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "cardBody" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "inherit" },
-              "angle": { "type": "number", "min": 0, "max": 360, "wrap": true, "literal": ["free"], "default": "free" },
-              "targetDistance": { "type": "number", "default": 40, "min": 0 },
-              "collapseDistance": { "type": "number", "default": 0, "min": 0 },
               "width": { "type": "number", "default": 160, "min": 0 },
               "height": { "type": "number", "default": 230, "min": 0 },
-              "deadzone": { "type": "number", "default": 60, "min": 0 },
-              "delayMs": { "type": "number", "default": 0, "min": 0 },
-              "speed": { "type": "number", "default": 7, "min": 0 },  # thousands of px/s
-              "easeMs": { "type": "number", "default": 120, "min": 0 },
-              "minMoveMs": { "type": "number", "default": 150, "min": 0 },
 
               "moduleAlignment": {
                 "type": "object",

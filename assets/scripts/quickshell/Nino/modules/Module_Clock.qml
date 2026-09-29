@@ -60,6 +60,8 @@ ModuleBase {
             font.pixelSize: root.iconSizing
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+
+            ModulePart { theme: root.theme }
         }
     }
 
@@ -84,6 +86,8 @@ ModuleBase {
                     font.family: root.theme.font || "sans-serif"
                     font.bold: root.theme.bold || false
                     font.pixelSize: (root.theme.fontSize || 12) * 1.4
+
+                    ModulePart { theme: root.theme }
                 }
 
                 Text {
@@ -92,6 +96,8 @@ ModuleBase {
                     color: root.theme.accent || "#87af5f"
                     font.family: root.theme.font || "sans-serif"
                     font.pixelSize: root.theme.fontSize || 12
+
+                    ModulePart { theme: root.theme }
                 }
             }
         }

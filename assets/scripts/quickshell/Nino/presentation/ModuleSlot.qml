@@ -137,6 +137,11 @@ Item {
         function onCommandRequested(message) { root.commandRequested(message); }
     }
 
+    // Hover and press are the parts' own, not the slot's: a module names the
+    // elements inside it that react (`ModulePart`), so hovering Volume's
+    // slider leaves its glyph alone. The slot animates nothing itself — it
+    // has no way to know where inside a view the cursor is.
+    //
     // A click lands here first because a module may claim it; a drag does
     // not, because dragging moves Nino rather than anything in this slot —
     // Body owns that. The exclusive grab is what keeps a tap on a module

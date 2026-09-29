@@ -5,6 +5,7 @@ import "../foundation"
 
 // Default sink volume and mute state, via PipeWire's wpctl.
 ProcessService {
+    id: root
     serviceName: "AudioService"
     pollIntervalMs: Config.get("audioPollIntervalMs")
     command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]

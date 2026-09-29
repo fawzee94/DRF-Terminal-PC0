@@ -31,6 +31,22 @@ QtObject {
     // exactly as long as the card opened for it.
     property var takeoverEntry: null
 
+    // Whether something inside Nino is asking to hold the keyboard — a
+    // search field, and nothing else so far. Cleared by any change that can
+    // take the asking module off the screen, so a request cannot outlive
+    // what made it: holding the keyboard exclusively with nothing left to
+    // type into would lock the desktop out of its own keys.
+    property bool keyboardWanted: false
+    onActiveModeChanged: keyboardWanted = false
+    onTakeoverEntryChanged: if (!takeoverEntry) keyboardWanted = false
+
+    // A command like any other, so a module's request reaches it the same
+    // way a click does. Only an asking module sets this true; nothing has to
+    // remember to set it back.
+    function requestKeyboard(wanted) {
+        keyboardWanted = !!wanted;
+    }
+
     readonly property var mode: {
         const block = (instance && instance[activeMode]) || ({});
         if (activeMode !== "card" || !takeoverEntry) return block;
@@ -118,27 +134,61 @@ QtObject {
 
     readonly property var fullSize: Geometry.sizeOnEdge(modeField("edge", "top"),
                                                         measure("width"), measure("height"))
+    // 0 on an axis means "do not shrink on this one", the same way 0 turns
+    // revealDistance and collapseDistance off — a mode that inherits a key it
+    // does not want needs a value that declines, not an absence.
+    function collapsedAxis(key, full) {
+        const declared = modeField(key, 0);
+        return declared > 0 ? declared : full;
+    }
+
     readonly property var collapsedSize: Geometry.sizeOnEdge(modeField("edge", "top"),
-        modeField("collapsedWidth", fullSize.width),
-        modeField("collapsedHeight", fullSize.height))
+        collapsedAxis("collapsedWidth", fullSize.width),
+        collapsedAxis("collapsedHeight", fullSize.height))
 
     readonly property real fullWidth: fillsScreen
         ? (activeScreen ? activeScreen.width : 0) : fullSize.width
     readonly property real fullHeight: fillsScreen
         ? (activeScreen ? activeScreen.height : 0) : fullSize.height
 
-    // revealByProximity — an opt-in capability a mode turns on simply by
-    // declaring revealDistance. Bar uses it; nothing else does today, and a
-    // future mode wanting it needs none of Bar's code, because Bar never
-    // owned the behaviour either.
-    readonly property bool revealByProximity: modeField("revealDistance", undefined) !== undefined
+    // revealByProximity — an opt-in capability, turned on by a revealDistance
+    // above zero. Bar uses it; nothing else does today, and a future mode
+    // wanting it needs none of Bar's code, because Bar never owned the
+    // behaviour either. The test used to be "declared at all", which stopped
+    // being expressible once every mode inherits a value from its instance —
+    // 0 is how a mode that inherits the key still says no.
+    readonly property bool revealByProximity: modeField("revealDistance", 0) > 0
 
     // Measured against where this mode sits at *full* size, deliberately:
     // measuring against the current rect would make w/h depend on revealed
     // and revealed depend on w/h — a binding loop.
+    //
+    // Where that is depends on how the mode places itself. An anchored one
+    // has a corner to compute; a cursor-relative one is wherever it was last
+    // put, which is `acceptedTarget` — a plain property written imperatively,
+    // so reading it here loops through nothing. Until 2026-09-28 this asked
+    // for the anchor corner either way, which for a cursor mode is a
+    // rectangle Nino is nowhere near, and made revealDistance an
+    // anchored-only capability without anything saying so.
     readonly property var fullRect: {
         const screen = activeScreen;
         if (!screen || !mode) return null;
+        // A cursor mode is measured against the rectangle it *draws*, which
+        // is the only one whose gap to the cursor is the same in both states:
+        // `targetDistance` is maintained to the drawn edge, so measuring the
+        // full-size rect instead made collapsed and revealed disagree about
+        // the gap by half the size difference, and anything in that band
+        // flipped on every retarget. Reading w/h here is safe only because
+        // `revealed` is held rather than bound — the freeze above is what
+        // breaks the cycle.
+        //
+        // An anchored mode keeps its anchor rect: `anchorCorner` already
+        // computes from full size, so it never depended on its own reveal
+        // state and has no cycle to break. Measuring its drawn rect instead
+        // would only move the distance at which a collapsed Bar triggers.
+        if (positioning === "cursor") {
+            return acceptedTarget ? { x: x, y: y, width: w, height: h } : null;
+        }
         const corner = anchorCorner(screen, { width: fullWidth, height: fullHeight });
         return { x: corner.x, y: corner.y, width: fullWidth, height: fullHeight };
     }
@@ -166,17 +216,64 @@ QtObject {
         root.y += dy;
     }
 
+    // The position animations are what travel means here; a size change on
+    // its own is not a move. Named as one string so a reader and a check ask
+    // the same question.
+    //
+    // Written from the animations' own signal rather than bound to their
+    // `running`, because bound it loops: the change runs out through
+    // motion → syncReveal → revealed → w → applyPosition → x, and x is what
+    // starts the animation again. Qt detected that and stopped evaluating,
+    // which left `motion` stale — a Nino that had stopped went on believing
+    // it was travelling, and refused to resize until something else poked it.
+    // The chain still exists and still terminates; it just is not a binding.
+    property bool inTransit: false
+
+    function syncMotion() {
+        inTransit = followX.running || followY.running;
+    }
+    readonly property string motion: dragging ? "dragging"
+                                   : inTransit ? "inTransit" : "stationary"
+
     function endDrag() {
-        dragging = false;
-        // The drop point is where following resumes measuring from.
+        // The drop point is where following resumes measuring from, and it has
+        // to be recorded *before* the flag clears. Clearing it settles the
+        // motion, which lets the size change, and a size change repositions
+        // from acceptedTarget — so doing this second repositioned from the
+        // pre-drag target and sprang a shrunk pill back to where it started.
         acceptedTarget = centre();
+        dragging = false;
     }
 
-    readonly property bool revealed: {
+    // Whether the cursor is near enough *right now*. Read live only while
+    // Nino is still — see `revealed`.
+    readonly property bool nearEnough: {
         if (!revealByProximity || pinned) return true;
         if (!cursor || !fullRect) return false;
         return Geometry.distanceToRect(cursor, fullRect) <= modeField("revealDistance", 0);
     }
+
+    // What the size actually follows. A plain property rather than a binding,
+    // because the whole point is that it can decline to change: resizing
+    // mid-flight moves the target — `cursorTarget` offsets by the size being
+    // drawn — which moves the size again, and a pill crossing the screen
+    // flickered the whole way there. A drag is the same loop with the target
+    // left behind entirely, since `retarget` declines to run during one.
+    property bool revealed: true
+
+    function syncReveal() {
+        if (motion === "inTransit") revealed = false;
+        else if (motion === "stationary") revealed = nearEnough;
+    }
+
+    // Deferred a pass, which is the whole trick. A cursor move and the leg it
+    // starts land in the same frame, and `nearEnough` re-evaluates while
+    // `motion` still says stationary — reading it there froze the *new*
+    // value instead of holding the old one. By the next pass the leg has
+    // begun, so this answers "did that cursor move start one?" rather than
+    // racing it. A parked Nino starts none, and so still resizes.
+    onNearEnoughChanged: Qt.callLater(syncReveal)
+    onMotionChanged: syncReveal();
 
     readonly property real w: revealed ? fullWidth : collapsedSize.width
     readonly property real h: revealed ? fullHeight : collapsedSize.height
@@ -284,9 +381,16 @@ QtObject {
     }
 
     // Collapsing changes the size, and position is measured from the
-    // centre, so x/y must be re-derived when it does.
-    onWChanged: applyPosition()
-    onHChanged: applyPosition()
+    // centre, so x/y must be re-derived when it does — standing still. In
+    // flight this lands rather than flies, which would put Nino on its
+    // destination the moment it shrank, so the leg is left to finish on the
+    // aim it set off with.
+    // A resize keeps the centre, so this is not travel: Pose's job is the
+    // position of the *finished* size and Body morphs the drawing between the
+    // two. Gliding here would desync them, and the animation it started fed
+    // straight back into `motion` — the loop Qt reported twice.
+    onWChanged: if (!inTransit) applyPosition(true)
+    onHChanged: if (!inTransit) applyPosition(true)
 
     // The anchor screen can arrive after the first target was computed —
     // Dashboard's lock is asynchronous, so the opening frame resolves
@@ -309,24 +413,32 @@ QtObject {
     onModeChanged: Qt.callLater(enterMode)
     Component.onCompleted: enterMode()
 
-    // speed 0 means teleport, so the Behavior is simply switched off and the
-    // assignment lands instantly.
+    // Whether position animates at all. speed 0 no longer means teleport on
+    // its own: minMoveMs already meant "the shortest a move may take", so with
+    // no speed cap it becomes the whole duration and a deadzone step glides
+    // rather than jumping. Both at 0 is the teleport, still reachable and
+    // still what a check wants. Named so a check can read it — a Behavior's
+    // `enabled` is not reachable from outside.
+    readonly property bool glides: (speed > 0 || minMoveMs > 0) && !dragging
+
     Behavior on x {
-        enabled: root.speed > 0 && !root.dragging
+        enabled: root.glides && !root.repositioning
         SmoothedAnimation {
             id: followX
             velocity: root.legVelocityX
             // -1 is Qt's "ease across the whole move"; a positive easeMs
             // levels the velocity out after that long and cruises the rest.
             maximumEasingTime: root.easeMs > 0 ? root.easeMs : -1
+            onRunningChanged: root.syncMotion()
         }
     }
     Behavior on y {
-        enabled: root.speed > 0 && !root.dragging
+        enabled: root.glides && !root.repositioning
         SmoothedAnimation {
             id: followY
             velocity: root.legVelocityY
             maximumEasingTime: root.easeMs > 0 ? root.easeMs : -1
+            onRunningChanged: root.syncMotion()
         }
     }
 
@@ -339,6 +451,10 @@ QtObject {
         if (borrowsAnchor) captureSummonPoint();
         if (fillsScreen) lockScreen();
         retarget();
+        // Runs through Qt.callLater (L46), so the bindings this reads have
+        // settled — a mode that opens already still would otherwise wait for
+        // a move it is never going to make.
+        revealed = nearEnough;
     }
 
     // What a mode starts out heading for. Null means "work it out from
@@ -441,8 +557,33 @@ QtObject {
     // Back to whatever was active before this mode, which is not the same
     // question close() answers — that one always goes to restingMode.
     function back() {
+        // A takeover summoned from the card never changed the mode, so the
+        // step back is out of the takeover rather than out of the card.
+        // Summoned from a perch it *was* a mode change, and switchMode below
+        // drops the overlay on its way out. Only back peels: close answers a
+        // different question, and collapse is what collapseWhenAbandoned
+        // calls, where peeling would leave a plain card standing.
+        if (takeoverEntry && takeoverEntry.from === activeMode) {
+            takeoverEntry = null;
+            return;
+        }
         if (lastActiveMode && instance && instance[lastActiveMode]) switchMode(lastActiveMode);
         else close();
+    }
+
+    // Free or fixed bearing, for this Nino rather than for one mode.
+    // Undefined until something toggles it, which is what keeps a mode's own
+    // defaultAngle meaningful: until asked, every mode answers for itself, and
+    // from the first toggle on the answer is the same everywhere. A config
+    // reload rebuilds Pose and so starts it unset again.
+    property var angleOverride: undefined
+
+    readonly property bool bearingIsFree: angleOverride === undefined
+        ? modeField("defaultAngle", "free") === "free"
+        : angleOverride
+
+    function toggleAngle() {
+        angleOverride = !bearingIsFree;
     }
 
     function setPinned(value) {
@@ -453,7 +594,10 @@ QtObject {
     // the card shows what the author already configured rather than schema
     // defaults. Dot names its one module outright; every packing mode by id.
     function takeoverSource(id) {
-        const from = mode;
+        // The mode's own configured block, not the composed `mode` — while a
+        // takeover is open that one holds nothing but the takeover, so every
+        // name would miss and a second takeover could only ever be refused.
+        const from = (instance && instance[activeMode]) || ({});
         if (!from.modules) return from.module ? { module: from.module, options: from.moduleOptions || ({}) } : null;
         const entry = (from.modules || []).find(each => each.id === id);
         return entry ? { module: entry.module, options: (from.moduleOptions || ({}))[id] || ({}) } : null;
@@ -473,8 +617,14 @@ QtObject {
                 + `"${instance ? instance.id : "?"}" does not declare`);
             return;
         }
-        takeoverEntry = { module: source.module,
-                          options: Object.assign({}, source.options, { view: "takeover" }) };
+        // The clicked module's clicks belong to the mode it was clicked in:
+        // their ids name that mode's modules, so firing one from inside the
+        // card it opened resolves against a block holding only the takeover.
+        // A takeover claims nothing by config — whatever its own parts do not
+        // handle falls through to the card's clicks, the same as its padding.
+        const options = Object.assign({}, source.options, { view: "takeover" });
+        delete options.clicks;
+        takeoverEntry = { module: source.module, options: options, from: activeMode };
         switchMode("card");
     }
 
@@ -510,10 +660,14 @@ QtObject {
 
     function cursorTarget() {
         if (!cursor) return null;
-        // "free" holds whatever bearing the rectangle already has, so it
-        // corrects distance without ever swinging around the cursor.
-        const angle = modeField("angle", "free");
-        const bearing = angle === "free" ? Geometry.angleFrom(cursor, centre()) : angle;
+        // A free bearing holds whatever the rectangle already has, so it
+        // corrects distance without ever swinging around the cursor; fixed
+        // takes the configured one. Two keys rather than one
+        // number-or-literal, because a fixed bearing of 0 is a real bearing
+        // and not a sentinel.
+        const bearing = bearingIsFree
+            ? Geometry.angleFrom(cursor, centre())
+            : modeField("angleDegrees", 0);
         // targetDistance is the gap to Nino's nearest edge, so how far its
         // centre goes depends on the mode's proportions and this bearing.
         const offset = Geometry.offsetForGap(bearing, { width: w, height: h },
@@ -634,23 +788,50 @@ QtObject {
     // size — Bar revealing — keeps the same centre, so the gate sees an
     // unchanged target and would otherwise leave x/y at the old size's
     // offset, drawing the mode off-centre by half the size change.
-    function applyPosition() {
+    function applyPosition(instant) {
         if (!acceptedTarget) return;
+        if (instant) {
+            // Nothing to plan, and nothing to animate: the Behavior is off for
+            // exactly this assignment.
+            repositioning = true;
+            root.x = acceptedTarget.x - w / 2;
+            root.y = acceptedTarget.y - h / 2;
+            repositioning = false;
+            return;
+        }
         planLeg();
         root.x = acceptedTarget.x - w / 2;
         root.y = acceptedTarget.y - h / 2;
     }
 
+    // Held true across a reposition that must land rather than fly. Read by
+    // the Behaviors below, never by anything that decides where to go.
+    property bool repositioning: false
+
+    // The target this leg was planned for. `acceptedTarget` is replaced with
+    // a fresh object at every acceptance, so identity is the whole test.
+    property var plannedTarget: null
+
     // Called with Nino still at the leg's starting point, so a retarget
     // mid-flight plans for the leg it is actually about to fly. `speed`
     // caps a long leg; minMoveMs floors a short one.
+    //
+    // Once per accepted target, and no more: `retarget` runs on every cursor
+    // reading and positions from the target whether or not the deadzone let a
+    // new one in, so re-planning here re-floors a leg already in flight from
+    // wherever Nino has got to — and one re-floored on every reading never
+    // arrives, nor reports that it stopped (lore.md L52).
     function planLeg() {
-        if (speed <= 0) return;
+        if (plannedTarget === acceptedTarget) return;
+        plannedTarget = acceptedTarget;
         const dx = Math.abs(acceptedTarget.x - w / 2 - x);
         const dy = Math.abs(acceptedTarget.y - h / 2 - y);
         const span = Math.hypot(dx, dy);
         if (span <= 0) return;
-        const seconds = Math.max(span / speed, minMoveMs / 1000);
+        // No speed cap leaves minMoveMs as the whole duration; with neither
+        // there is nothing to fly and the Behavior is off anyway.
+        const seconds = Math.max(speed > 0 ? span / speed : 0, minMoveMs / 1000);
+        if (seconds <= 0) return;
         legVelocityX = dx / seconds;
         legVelocityY = dy / seconds;
     }

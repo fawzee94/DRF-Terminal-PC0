@@ -10,6 +10,10 @@ ModuleBase {
     defaultView: 0
     viewNames: ({ icon: 0, takeover: 1, widget: 2 })
 
+    // Every left click that lands anywhere in this module is already spoken
+    // for: the glyph mutes, the track sets the level.
+    claimedButtons: ["left"]
+
     optionsSchema: ({
         type: "object",
         fields: {
@@ -19,10 +23,10 @@ ModuleBase {
             icons: {
                 type: "object",
                 fields: {
-                    volumeHigh: { type: "string", default: "" },
+                    volumeHigh: { type: "string", default: "" },
                     volumeMid: { type: "string", default: "" },
-                    volumeLow: { type: "string", default: "" },
-                    mute: { type: "string", default: "" }
+                    volumeLow: { type: "string", default: "" },
+                    mute: { type: "string", default: "" }
                 }
             },
             // The slider's own length. It has to declare one rather than
@@ -71,8 +75,9 @@ ModuleBase {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
-            TapHandler {
-                onSingleTapped: AudioService.toggleMute()
+            ModulePart {
+                theme: root.theme
+                action: name => { if (name === "left") AudioService.toggleMute(); }
             }
         }
     }
@@ -109,8 +114,11 @@ ModuleBase {
                     font.family: root.theme.font || "sans-serif"
                     font.pixelSize: root.theme.fontSize || 8
 
-                    TapHandler {
-                        onSingleTapped: AudioService.toggleMute()
+                    // Its own part: muting from here leaves the slider
+                    // beside it perfectly still.
+                    ModulePart {
+                        theme: root.theme
+                        action: name => { if (name === "left") AudioService.toggleMute(); }
                     }
                 }
 
@@ -153,6 +161,14 @@ ModuleBase {
                             enabled: root.reading !== undefined
                             NumberAnimation { duration: 90; easing.type: Easing.OutQuad }
                         }
+                    }
+
+                    // Hover only. A press here is the start of a drag, and
+                    // scaling the track under the hand would fight the very
+                    // gesture it belongs to.
+                    ModulePart {
+                        theme: root.theme
+                        pressable: false
                     }
 
                     // A MouseArea rather than a handler: press position and
