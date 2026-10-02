@@ -49,7 +49,7 @@ Singleton {
 
     // A mode's `width` is its length along its edge and `height` its
     // thickness. On a left or right edge those land on the other screen
-    // axis, so one bar config describes the same bar whichever side it is
+    // axis, so one anchored config describes the same anchored whichever side it is
     // anchored to.
     function sizeOnEdge(edge, length, thickness) {
         return (edge === "left" || edge === "right")

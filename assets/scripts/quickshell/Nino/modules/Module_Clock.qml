@@ -128,7 +128,7 @@ ModuleBase {
             readonly property real baseSize: root.theme.fontSize || 12
 
             // Shrinks to whatever width the host granted rather than
-            // overflowing it: the card this usually lands in is narrow.
+            // overflowing it: the contextual this usually lands in is narrow.
             readonly property real cellSize: width > 0
                 ? Math.min(baseSize * 2.4, (width - grid.columnSpacing * 6) / 7)
                 : baseSize * 2.4

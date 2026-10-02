@@ -20,23 +20,32 @@
   "instances": [
     {
       "id": "nino1",
-      "restingMode": "dot",
+      "restingMode": "leashed",
+
+      # "top" or "overlay". overlay draws over scratchpads — and over
+      # fullscreen windows too; there is nothing in between (lore.md L57).
+      "layer": "top",
 
       # How this Nino moves. A mode overrides only what it wants different.
       "defaultAngle": "free",
       "angleDegrees": 0,
-      "deadzone": 0,
+      "deadzone": 23,
       "delayMs": 0,
-      "speed": 0,
-      "easeMs": 20,
-      "minMoveMs": 150,
+      "speed": 1.5,
+      "easeMs": 2,
+      "minMoveMs": 50,
       "animationSet": "Default",
-      "cycleModes": ["dot","pill", "bar"],
+      "cycleModes": ["leashed", "anchored"],
 
-      "dot": {
+      "leashed": {
         "targetDistance": 23,
-        "size":15,
+        "size":10,
         "module": null,
+        "clicks": {
+          "left": { "command": "switchMode", "value": "dynamic" },
+          "right": { "command": "switchMode", "value": "contextual" },
+          "middle": "toggleFollow"
+        },
         "moduleOptions": {
           "timeFormat": "hh:mm",
           # A bare name is the whole command; the long form carries a value.
@@ -49,15 +58,15 @@
 
       },
 
-      "pill": {
+      "dynamic": {
         "targetDistance": 35,
         "deadzone": 35,
 
         # Shrink-in-place, off until revealDistance is set. 0 on an axis means
-        # it does not shrink on that one. Only a *parked* pill can show it —
+        # it does not shrink on that one. Only a *parked* dynamic can show it —
         # a following one holds the cursor at targetDistance forever.
-        "revealDistance": 20,
-        "collapsedWidth": 70,
+        "revealDistance": 1,
+        "collapsedWidth": 55,
         "collapsedHeight": 30,
 
         "width": 150,
@@ -69,8 +78,8 @@
         # Commands: close, collapse, back, togglePin, toggleFollow,
         # cycleModes, and switchMode/setPinned/takeover with a value.
         "clicks": {
-          "left": { "command": "switchMode", "value": "card" },
-          "right": { "command": "switchMode", "value": "card" },
+          "left": { "command": "switchMode", "value": "contextual" },
+          "right": { "command": "switchMode", "value": "leashed" },
           "middle": "toggleFollow"
         },
 
@@ -103,18 +112,18 @@
         }
       },
 
-      "bar": {
-        "screen": "current",
+      "anchored": {
+        "screen": "DP-1",
         "edge": "top",
         "edgeMargin": 5,
         "alignment": "center",
-        "width": 150,
+        "width": 160,
         "height": 30,
         "collapsedWidth": 15,
         "collapsedHeight": 15,
-        "revealDistance": 30,
+        "revealDistance": 10,
 
-        "clicks": { "left": { "command": "switchMode", "value": "card" }, "right": { "command": "switchMode", "value": "card" } },
+        "clicks": { "left": { "command": "switchMode", "value": "contextual" }, "right": { "command": "switchMode", "value": "contextual" } },
 
         # Inherits from the top-level theme. Override any of:
         #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
@@ -125,9 +134,14 @@
         },
         "modules": [
           { "id": "barClock", "module": "Clock" },
-          { "id": "barVolume", "module": "Volume" }
+          { "id": "barVolume", "module": "Volume" },
+          { "id": "barLauncher", "module": "Launcher" }
         ],
         "moduleOptions": {
+          "barLauncher": {
+            "view": "icon",
+            "clicks": { "left": { "command": "takeover", "value": "barLauncher" } }
+          },
           "barClock": {
             "view": "widget",
             "dateFormat": "ddd, MMM d",
@@ -140,7 +154,7 @@
         }
       },
 
-      "card": {
+      "contextual": {
         "targetDistance": 40,
         "collapseDistance": 40,
         "width": 160,
@@ -150,7 +164,7 @@
         "speed": 3,
 
         "clicks": {
-          "right": "close",
+          "right": "back",
           "middle": "toggleFollow"
         },
 
@@ -170,7 +184,7 @@
           { "id": "cardClock2", "module": "Clock" }
         ],
         "moduleOptions": {
-          "cardControls": { "buttons": ["pin", "dashboard", "back", "close"] },
+          "cardControls": { "buttons": ["pin", "fullScreen", "back", "close"] },
           "cardClock": { "view": "widget", "clicks": {"right": { "command": "takeover", "value": "cardClock" }} },
           "cardVolume": { "view": "widget" },
           "cardsClock": { "view": "icon" },
@@ -179,7 +193,7 @@
         }
       },
 
-      "dashboard": {
+      "fullScreen": {
         "columns": 7,
         "rows": 5,
         "padding": 50,
@@ -187,7 +201,7 @@
         "clicks": { "middle": "back" },
         
 
-        "cards": [
+        "tiles": [
           {
             "id": "card1",
             "col": 3,
@@ -226,6 +240,25 @@
               { "id": "card2Clock", "module": "Clock" }
             ],
             "moduleOptions": {"card2Clock": { "view": "takeover" }}
+          },
+          {
+            "id": "card2",
+            "col": 2,
+            "row": 1,
+            "w": 1,
+            "h": 1,
+            "iconSize": 24,
+
+            # Inherits from the top-level theme. Override any of:
+            #   background, radius, borderWidth, accent, text, padding, gap, font, fontSize
+
+            "moduleAlignment": {
+              "horizontal": "center"
+            },
+            "modules": [
+              { "id": "card3Launcher", "module": "Launcher" }
+            ],
+            "moduleOptions": {"card3Launcher": { "view": "takeover" }}
           }
         ]
       }

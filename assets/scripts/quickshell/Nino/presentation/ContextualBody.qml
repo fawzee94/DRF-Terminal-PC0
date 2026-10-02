@@ -2,10 +2,10 @@ import QtQuick
 import "../foundation"
 import "Packing.js" as Packing
 
-// The organic-height, scrollable packing. Card mode and every Dashboard
+// The organic-height, scrollable packing. Contextual mode and every FullScreen
 // cell use this verbatim, differing only in the viewport size they are
-// handed — which is why a cell and a standalone Card look and behave
-// identically with no special-casing. See architecture.md "System: Card Body".
+// handed — which is why a cell and a standalone Contextual look and behave
+// identically with no special-casing. See architecture.md "System: Contextual Body".
 //
 // Height is organic: a view renders at its own natural size and the
 // scrollable area grows to fit, so there is no height for a view to fail.
@@ -74,7 +74,7 @@ Item {
 
         // interactive: false disables Flickable's own drag recognition while
         // keeping its clipping, content-height and bounds machinery. Native
-        // flick scrolling *is* a drag gesture, and would fight Card's
+        // flick scrolling *is* a drag gesture, and would fight Contextual's
         // drag-to-reposition on the same surface; driving contentY from a
         // WheelHandler instead means two input channels that no single
         // gesture can trigger at once, so there is nothing to arbitrate.
@@ -89,7 +89,7 @@ Item {
 
         // A wheel notch arrives as one 120-unit step, so writing it
         // straight into contentY teleports the content by more than half a
-        // card at a time — which is the whole of why scrolling read as
+        // contextual at a time — which is the whole of why scrolling read as
         // choppy. The Behavior interpolates between notches, and a burst of
         // them retargets the animation already running rather than queueing
         // behind it, so holding the wheel down glides.

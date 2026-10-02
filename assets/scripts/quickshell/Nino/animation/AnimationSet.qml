@@ -13,12 +13,17 @@ Item {
     readonly property string safeName: Config.sanitizeIdentifier(setName) || "Default"
     property string effectiveName: safeName
     onSafeNameChanged: effectiveName = safeName
+    onEffectiveNameChanged: resolve()
+    Component.onCompleted: resolve()
 
-    readonly property url source: Qt.resolvedUrl("Animation_" + effectiveName + ".qml")
+    // Assigned, never bound: the fallback below writes `effectiveName` back
+    // while a binding here would still be reading it (lore.md L59).
+    function resolve() {
+        catalogue.source = Qt.resolvedUrl("Animation_" + effectiveName + ".qml");
+    }
 
     Loader {
         id: catalogue
-        source: root.source
         onStatusChanged: {
             if (status !== Loader.Error || root.effectiveName === "Default") return;
             console.warn(`[AnimationSet] no set named "${root.effectiveName}", using Default`);
@@ -59,12 +64,20 @@ Item {
         }
     }
 
+    // A destroyed QObject is still a truthy JS object, so `if (target)` is no
+    // test at all: it passes a dangling pointer straight into an animation,
+    // whose `target` is raw and read on start. Qt.isQtObject is the one test
+    // that tells a live object from a dead one.
+    function alive(target) {
+        return Qt.isQtObject(target);
+    }
+
     // Captures what the style touches, animates it away, runs `action` at
     // the low point, then animates back. The style is a complete recipe, so
     // there is no separate property list or away-value to pass in.
     function around(target, styleName, action) {
         const recipe = style(styleName);
-        if (!target || !recipe) {
+        if (!alive(target) || !recipe) {
             if (action) action();
             return;
         }
@@ -75,6 +88,15 @@ Item {
 
         function finish() {
             if (action) action();
+            // The action is what usually kills the target: a press on an anchored
+            // module part opens a contextual, the anchored relayouts, and the part the
+            // press was animating is gone before `in` gets to play. Starting
+            // an animation against it segfaults (lore.md L58).
+            if (!alive(target)) {
+                away.destroy();
+                back.destroy();
+                return;
+            }
             back.start();
         }
 
@@ -82,7 +104,7 @@ Item {
             away.destroy();
             back.destroy();
             // A pulse and a held state share a target and often a property:
-            // every path that collapses a bar also pulses the body, and the
+            // every path that collapses an anchored also pulses the body, and the
             // pulse's `in` returns to *its* rest, not to the collapsed look.
             // Whichever finished last used to win. The held phase is
             // re-asserted instead, so a pulse is an excursion from the state
@@ -116,7 +138,7 @@ Item {
 
     function play(target, styleName, phase) {
         const recipe = style(styleName);
-        if (!target || !recipe) return;
+        if (!alive(target) || !recipe) return;
 
         held.set(target, { styleName: styleName, phase: phase });
 

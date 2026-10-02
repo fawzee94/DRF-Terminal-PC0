@@ -5,8 +5,8 @@ import "../presentation"
 import "../animation"
 
 // The persistent content host, one per Viewport. Never destroyed or
-// reloaded across a mode switch: position lives in Pose, which does not
-// reload, so a transition has nothing to rescue.
+// reloaded across a mode switch, so a transition has nothing to rescue.
+// See architecture.md "System: Modes".
 Rectangle {
     id: root
 
@@ -22,18 +22,11 @@ Rectangle {
         setName: (root.instance && root.instance.animationSet) || "Default"
     }
 
-    // The token bundle every level below reads from. The mode slice already
-    // carries every theme field — Config resolved inheritance when it
-    // loaded — so this is that slice plus the global fields no mode
-    // inherits. Phase 7 adds the animation set to it.
-    // The animation set rides in the same bundle as the colours, so a
-    // button several levels down reaches its style off the object it
-    // already has rather than having it re-declared at every level.
-    // Nino's own live state rides along with the look. The bundle named
-    // `theme` is already displayedMode wholesale plus the animation set, so
-    // it is the module-facing bundle rather than a palette, and a second one
-    // plumbed through every content shape buys nothing for one flag. Last, so
-    // a mode block declaring the same key cannot shadow it.
+    // The one bundle every level below reads: displayedMode wholesale (Config
+    // already resolved theme inheritance) plus the global fields no mode
+    // inherits, the animation set and Nino's live state. Module-facing rather
+    // than a palette, so a second bundle buys nothing. The explicit keys go
+    // last, where a mode block declaring the same name cannot shadow them.
     readonly property var theme: Object.assign({ bold: Config.data.bold }, displayedMode,
                                                { animations: animations,
                                                  pinned: root.pose ? root.pose.pinned : false })
@@ -41,15 +34,14 @@ Rectangle {
     signal commandRequested(var message)
 
     // The body's own look follows the mode at once; only what the content
-    // reads waits for the swap's low point. See `displayedMode`.
+    // reads waits for the swap's low point — see `displayedMode`.
     color: mode.background || "transparent"
     radius: mode.radius || 0
     border.width: mode.borderWidth || 0
     border.color: mode.accent || "transparent"
 
-    // Body owns its size because the morph is Body's — Viewport places it,
-    // Pose decides what size it should be, and the interpolation between
-    // two sizes belongs to neither.
+    // Body owns its size because the morph is Body's: Viewport places it,
+    // Pose decides what size it should be, the interpolation is neither's.
     width: pose ? pose.w : 0
     height: pose ? pose.h : 0
 
@@ -72,9 +64,8 @@ Rectangle {
         }
     }
 
-    // While the box morphs, its size lags what Pose asked for. Where that
-    // slack is taken is which edge appears to stand still; Viewport adds it
-    // to the position Pose computed for the finished size.
+    // Mid-morph the size lags what Pose asked for. Where that slack is taken
+    // is which edge appears to stand still; Viewport adds it to the position.
     readonly property real slackX: ((pose ? pose.w : 0) - width) * animations.grow.x
     readonly property real slackY: ((pose ? pose.h : 0) - height) * animations.grow.y
 
@@ -82,17 +73,14 @@ Rectangle {
     // the two never pull in opposite directions.
     transformOrigin: animations.grow.origin
 
-    // Drag is Nino's, not a module's: the gesture repositions the whole
-    // window, so it belongs to the thing being moved rather than to
-    // whatever happened to be under the finger. Dragging anywhere on Nino
-    // works, including the padding and the gaps between modules.
+    // Drag belongs to the thing being moved, so it lives here rather than in
+    // a slot — the padding and the gaps between modules drag too.
     //
-    // Inner interactive content still wins, but not by hit-testing order:
-    // a widget owning a press-drag gesture grabs on press, and a
-    // DragHandler is allowed by default to take that grab the moment the
-    // drag threshold passes (lore.md L44). Dropping CanTakeOverFromItems
-    // is what leaves Volume's slider alone. Handlers stay stealable — a
-    // TapHandler yielding to a drag is the disambiguation we want.
+    // A DragHandler may by default take a grab from an item that already has
+    // one (L44), which is what dragged Nino along with the Volume slider.
+    // Dropping CanTakeOverFromItems leaves inner press-drag gestures alone;
+    // handlers stay stealable, since a TapHandler yielding to a drag is the
+    // disambiguation wanted.
     DragHandler {
         enabled: root.mode.draggable === true && !!root.pose
         // Nothing here is moved by the handler; Pose owns position.
@@ -119,10 +107,9 @@ Rectangle {
         }
     }
 
-    // The background click, for the same reason the drag is here: Nino's
-    // padding and the gaps between modules are part of its surface, and a
-    // Module Slot only ever sees what lands on the slot itself. A slot
-    // resolves its own click and never lets one reach here.
+    // Here for the same reason the drag is. A slot takes an exclusive grab
+    // and resolves its own click, so this only ever sees what lands outside
+    // one.
     TapHandler {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         onSingleTapped: (eventPoint, button) => root.routeBackground(button)
@@ -135,26 +122,20 @@ Rectangle {
         if (message) root.commandRequested(message);
     }
 
-    // One Loader, its component named by the active mode's own data. Two
-    // consecutive modes sharing a shape cost nothing: the binding value does
-    // not change, so the Loader never recreates.
+    // One Loader, its component named by the mode's own data. Two consecutive
+    // modes sharing a shape never recreate it — the binding value is equal.
     readonly property var shapes: ({
         single: singleShape,
         autoflow: autoFlowShape,
-        cardBody: cardBodyShape,
-        dashboardGrid: dashboardShape
+        contextualBody: contextualBodyShape,
+        fullScreenGrid: fullScreenShape
     })
 
-    // A bar on a vertical edge packs along its long axis and turns as one
-    // piece, so every shape, module and view is reused unchanged. The box
-    // itself is never left turned: rotating Body turns the very rectangle the
-    // window mask and the proximity rect derive from, which only a pulse may
-    // do, and only because it ends back at rest.
-    //
-    // The edge is read off the content clock rather than off Pose, which
-    // knows the same thing about the live mode: the turn and the box it
-    // turns in belong to the content, so they change when the content does
-    // rather than a transition early.
+    // A vertical anchored turns as one piece, so every shape, module and view
+    // is reused unchanged. The box itself is never left turned: rotating Body
+    // turns the very rectangle the window mask and the proximity rect derive
+    // from. Read off the content clock, not Pose, so the turn changes when the
+    // content does rather than a transition early.
     readonly property string contentEdge: root.displayedMode.edge || "top"
     readonly property bool verticalEdge: contentEdge === "left" || contentEdge === "right"
 
@@ -163,11 +144,9 @@ Rectangle {
     readonly property real contentRotation:
         !verticalEdge ? 0 : (contentEdge === "right" ? 90 : -90)
 
-    // The edge turn lives on the wrapper so the Loader's own rotation stays
-    // free for the catalogue. One property cannot carry two rotations: the
-    // catalogue's values are an offset from rest, while rest for a vertical
-    // bar is already ±90, so animating the turned property would replace the
-    // turn rather than add to it — and a held entry would leave it replaced.
+    // The turn lives on the wrapper so the Loader's own rotation stays free
+    // for the catalogue: one property cannot carry two rotations, and the
+    // catalogue's values are offsets from a rest that is already ±90 here.
     Item {
         width: root.verticalEdge ? parent.height : parent.width
         height: root.verticalEdge ? parent.width : parent.height
@@ -181,11 +160,10 @@ Rectangle {
         }
     }
 
-    // Collapse is a change to Nino's shape, so it plays on Body alongside
-    // the morph that resizes it. Held: a bar stays collapsed for as long as
-    // the cursor stays away.
+    // A change to Nino's shape, so it plays on Body alongside the morph that
+    // resizes it. Held: an anchored stays collapsed while the cursor is away.
     readonly property bool revealed: root.pose ? root.pose.revealed : true
-    onRevealedChanged: animations.play(root, "barCollapse", revealed ? "in" : "out")
+    onRevealedChanged: animations.play(root, "proximityCollapse", revealed ? "in" : "out")
 
     // Off Pose's state, not off the click that caused it, so a ControlBar
     // press, a background click and an IPC call all look the same.
@@ -200,17 +178,11 @@ Rectangle {
         function onReloaded() { animations.around(root, "configReload"); }
     }
 
-    // The mode the *content* is currently showing, which trails the real one
-    // by exactly one animation. Everything below this level reads it rather
-    // than `mode`, so the shape, the modules, the padding and the gaps all
-    // change together at the low point rather than one of them changing
-    // early and the rest arriving late.
-    //
-    // It also makes one hook cover both halves of "the content changed":
-    // Pose composes a takeover into `mode` the same way it composes a mode,
-    // so a card swapping to a takeover and a mode change are one event here.
-    // Two consecutive modes sharing a shape still cost nothing — the Loader
-    // sees the same component and never recreates.
+    // The mode the *content* is showing, trailing the real one by exactly one
+    // animation. Everything below reads this rather than `mode`, so the shape,
+    // the modules, the padding and the gaps all change together at the low
+    // point. Pose composes a takeover into `mode` the same way it composes a
+    // mode, so one hook covers both.
     property var displayedMode: ({})
     Component.onCompleted: displayedMode = mode
     onModeChanged: swapContent()
@@ -223,30 +195,21 @@ Rectangle {
         animations.around(content, "contentSwap", () => { root.displayedMode = root.mode; });
     }
 
-    // Body's own shape change, on its own clock beside the content's — the
-    // two overlap deliberately. Keyed on which mode is active rather than on
-    // `mode`, so a takeover and a config reload, neither of which resizes
-    // the box, leave the body alone.
+    // Body's own clock beside the content's; the two overlap deliberately.
+    // Keyed on activeMode rather than `mode`, so a takeover and a config
+    // reload — neither of which resizes the box — leave the body alone.
     readonly property string activeMode: root.pose ? root.pose.activeMode : ""
     onActiveModeChanged: animations.around(root, "modeTransition")
 
-    // Dot: exactly one Module Slot, no packing and no shape component of its
-    // own. Phase 5 adds the auto-flow grid, the card body and the dashboard
-    // grid alongside it.
-    //
-    // The wrapper exists because a Loader that has been given a size resizes
-    // whatever it loads to fill it — right for the packing shapes, wrong for
-    // Dot, whose single icon must sit at `size - padding` and be centred. The
-    // wrapper takes the fill; the slot keeps its own size inside it.
-    // Pill and Bar: items flow and wrap, rows are a uniform icon height, and
-    // whatever does not fit the rows available is dropped.
+    // Dynamic and Anchored: items flow and wrap, rows are a uniform icon
+    // height, and whatever does not fit the rows available is dropped.
     Component {
         id: autoFlowShape
 
         AutoFlowGrid {
             anchors.fill: parent
-            // padding is the total inset, split evenly — it trades off
-            // against icon size rather than adding to the footprint.
+            // The total inset, split evenly: it trades off against icon size
+            // rather than adding to the footprint.
             anchors.margins: (root.theme.padding || 0) / 2
             modules: root.displayedMode.modules || []
             moduleOptions: root.displayedMode.moduleOptions || ({})
@@ -260,12 +223,12 @@ Rectangle {
         }
     }
 
-    // Card, and every Dashboard cell, share this verbatim — the only
-    // difference is the viewport each is handed.
+    // Contextual and every FullScreen cell share this verbatim; only the
+    // viewport each is handed differs.
     Component {
-        id: cardBodyShape
+        id: contextualBodyShape
 
-        CardBody {
+        ContextualBody {
             anchors.fill: parent
             anchors.margins: (root.theme.padding || 0) / 2
             modules: root.displayedMode.modules || []
@@ -280,17 +243,17 @@ Rectangle {
         }
     }
 
-    // Dashboard looks each card up by its authored col/row/w/h rather than
+    // FullScreen looks each contextual up by its authored col/row/w/h rather than
     // packing anything.
     Component {
-        id: dashboardShape
+        id: fullScreenShape
 
-        DashboardGrid {
+        FullScreenGrid {
             anchors.fill: parent
             anchors.margins: (root.theme.padding || 0) / 2
             columns: root.displayedMode.columns || 1
             rows: root.displayedMode.rows || 1
-            cards: root.displayedMode.cards || []
+            tiles: root.displayedMode.tiles || []
             theme: root.theme
             padding: root.theme.padding || 0
             gap: root.theme.gap || 0
@@ -298,6 +261,11 @@ Rectangle {
         }
     }
 
+    // Leashed: one Module Slot, no packing. The wrapper is load-bearing — a
+    // Loader given a size resizes whatever it loads to fill it, which is
+    // right for the packing shapes and wrong here, where the single icon must
+    // sit at `size - padding` and be centred. The wrapper takes the fill; the
+    // slot keeps its own size inside it.
     Component {
         id: singleShape
 
@@ -307,9 +275,8 @@ Rectangle {
                 moduleName: root.displayedMode.module || ""
                 theme: root.theme
                 options: root.displayedMode.moduleOptions || ({})
-                // Dot's whole footprint is its one icon, so its `size` is
-                // the icon size; padding trades off against it rather than
-                // adding to it.
+                // Leashed's whole footprint is its one icon, so `size` is the
+                // icon size and padding trades off against it.
                 iconSize: root.displayedMode.size || 0
                 padding: root.theme.padding || 0
                 fixedCeiling: true

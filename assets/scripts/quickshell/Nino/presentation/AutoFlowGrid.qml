@@ -2,12 +2,12 @@ import QtQuick
 import "../foundation"
 import "Packing.js" as Packing
 
-// The fixed-ceiling, no-scroll packing used by Pill and Bar: items flow left
+// The fixed-ceiling, no-scroll packing used by Dynamic and Anchored: items flow left
 // to right and wrap, each row is as tall as its tallest item, and any row
 // whose bottom does not clear the host is discarded outright rather than
 // half-drawn. See architecture.md "Row-fit algorithm".
 //
-// Wrapping is not a per-mode setting. A short pill only ever shows one row
+// Wrapping is not a per-mode setting. A short dynamic only ever shows one row
 // because its height only admits one, not because wrapping was turned off.
 Item {
     id: root

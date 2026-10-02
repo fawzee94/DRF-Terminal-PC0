@@ -23,10 +23,10 @@ ModuleBase {
             icons: {
                 type: "object",
                 fields: {
-                    volumeHigh: { type: "string", default: "" },
-                    volumeMid: { type: "string", default: "" },
-                    volumeLow: { type: "string", default: "" },
-                    mute: { type: "string", default: "" }
+                    volumeHigh: { type: "string", default: "\u{1F50A}" },
+                    volumeMid: { type: "string", default: "\u{1F509}" },
+                    volumeLow: { type: "string", default: "\u{1F508}" },
+                    mute: { type: "string", default: "\u{1F507}" }
                 }
             },
             // The slider's own length. It has to declare one rather than
@@ -128,7 +128,7 @@ ModuleBase {
                     // A fixed-ceiling host is as wide as this view reports,
                     // so reading its width back would be the report chasing
                     // itself. There the slider is simply its own length; a
-                    // card offers a width of its own and it stretches.
+                    // contextual offers a width of its own and it stretches.
                     width: root.fixedCeiling ? root.sliderWidth
                         : Math.max(root.sliderWidth, root.availableWidth
                             - (glyph.visible ? glyph.width + channel.spacing : 0))

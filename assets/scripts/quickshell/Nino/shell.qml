@@ -51,7 +51,7 @@ ShellRoot {
             Pose {
                 id: ninoPose
                 instance: nino.instance
-                activeMode: nino.instance.restingMode || "dot"
+                activeMode: nino.instance.restingMode || "leashed"
             }
 
             // Addressing "which Nino" is just picking the right target
@@ -84,6 +84,7 @@ ShellRoot {
                     required property var modelData
                     screen: modelData
                     pose: ninoPose
+                    instance: nino.instance
                 }
             }
         }

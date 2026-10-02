@@ -1,32 +1,25 @@
 import QtQuick
 
-// The default catalogue: one property per named action. Each is plain data
-// rather than a declared animation, because AnimationSet.around has to run a
-// style against whatever target it is handed, and a declared
-// SequentialAnimation binds its target at creation.
+// The default catalogue: one property per named action, as plain data
+// rather than declared animations. See architecture.md "System: Animation
+// Catalogue". Editing this file is the supported way to retune Nino's feel.
 //
-// Outer list = steps that play in sequence. Each step's inner list =
-// properties that animate together. A literal translation of QML's own
-// SequentialAnimation-containing-ParallelAnimation, with no grouping
-// mechanism invented on top.
+// Outer list = steps that play in sequence; each step's inner list =
+// properties that animate together.
 //
-// Entries are grouped by what they animate, not by what triggers them:
-// content inside Nino, and Nino's own box. An entry is played one of two
-// ways, and which one it is decides how its values are written: a *pulse*
-// runs out-action-in in one go through AnimationSet.around, while a *held*
-// entry is played a phase at a time through AnimationSet.play and must name
-// an explicit `to` everywhere.
+// Entries are grouped by what they animate, not by what triggers them. An
+// entry is played one of two ways, and that decides how its values are
+// written: a *pulse* runs out-action-in in one go, while a *held* entry is
+// played a phase at a time and must name an explicit `to` everywhere.
 //
 // A custom set is a file whose root element is *this* one, redeclaring only
-// the entries that differ — QML inheritance supplies everything else, so
-// there is no per-entry fallback to build.
+// the entries that differ; QML inheritance supplies the rest.
 QtObject {
     // ---- Content inside Nino ----------------------------------------
     //
-    // The swap itself: played on the content wrapper, with the change made
-    // at the low point. Fires for every mode change and for a card changing
-    // what it holds, which is the same event seen from Body — Pose composes
-    // a takeover into `mode` exactly as it composes a mode.
+    // Played on the content wrapper, with the change made at the low point.
+    // Fires for every mode change and for a contextual changing what it
+    // holds, which is one event from Body's side.
     property var contentSwap: ({
         out: [[{ property: "opacity", to: 0.2, duration: 110, easing: Easing.InQuad },
                 { property: "scale", to: 0.3, duration: 120, easing: Easing.InQuad },
@@ -36,8 +29,8 @@ QtObject {
                { property: "rotation", to: 0, duration: 540, easing: Easing.OutBack }]]
     })
 
-    // A pulse: the away look is passed through, not held. Free to omit
-    // `to` on an `in` step — AnimationSet.around captures the resting value.
+    // A pulse: the away look is passed through, not held. Free to omit `to`
+    // on an `in` step — `around` captures the resting value.
     property var buttonPress: ({
         out: [[{ property: "scale", to: 0.5, duration: 80, easing: Easing.OutQuad },
                 { property: "opacity", to: 1, duration: 80, easing: Easing.OutQuad },
@@ -48,18 +41,11 @@ QtObject {
     })
 
     // Held: `out` on hover, `in` on leave, so every destination is explicit.
-    //
-    // `grow` rather than a scale ratio: this entry is shared by a 10px mute
-    // glyph, a 14px ControlBar button and a 134px slider, and a ratio moves
-    // those by one pixel, by two, and by sixteen — the small ones read as
-    // not animating at all. A growth gives each the same four pixels. It is
-    // the only entry that needs it, because it is the only one played
-    // against targets of such different sizes.
-    //
-    // Opacity is neutral here on purpose — a part at rest is already fully
-    // opaque, so the only move available is a dim, and a dimmed element
-    // reads as disabled rather than as pointed at. The axis is wired so a
-    // custom set can give it a job.
+    // `grow` names pixels rather than a ratio, because this entry is played
+    // against targets from a 10px glyph to a 134px slider. Opacity is
+    // neutral on purpose — the only move available is a dim, which reads as
+    // disabled rather than as pointed at — but the axis is wired so a custom
+    // set can give it a job.
     property var buttonHover: ({
         out: [[{ property: "scale", grow: 2, duration: 120, easing: Easing.OutQuad },
                 { property: "opacity", to: 1.0, duration: 120, easing: Easing.OutQuad },
@@ -73,8 +59,7 @@ QtObject {
     //
     // How the box resizes, and which edge stays put while it does. One per
     // set rather than one per entry: the Behavior that runs it sees a size
-    // change, not what caused one, so a single answer is the only answer it
-    // could act on.
+    // change and not what caused one.
     //
     // growFrom names the edge that HOLDS STILL — "top" keeps the top edge
     // where it is and grows downward, "bottom" grows upward. Anything
@@ -86,8 +71,7 @@ QtObject {
     })
 
     // Plays over the morph rather than instead of it, so it stays well clear
-    // of scale 0 — the box is busy changing size and hiding it defeats the
-    // point. The content has contentSwap for the disappearing act.
+    // of scale 0. The content has contentSwap for the disappearing act.
     property var modeTransition: ({
         out: [[{ property: "opacity", to: 0.85, duration: 110, easing: Easing.InQuad },
                 { property: "scale", to: 1, duration: 10, easing: Easing.InQuad },
@@ -98,15 +82,11 @@ QtObject {
     })
 
     // Held, and the one entry whose `out` values are a resting appearance
-    // rather than a moment in a transition — a collapsed bar wears them for
-    // as long as the cursor stays away.
-    //
-    // Scale is neutral here on purpose. The morph already shrinks the box to
-    // its collapsed size, and the window's input mask is built from the
-    // item's plain geometry with no sign that it tracks a transform, so a
-    // scale left standing would leave the clickable area disagreeing with
-    // what is drawn for the whole time the bar is collapsed.
-    property var barCollapse: ({
+    // rather than a moment in a transition. Scale must stay neutral: it
+    // targets Body, whose input mask is plain geometry with no sign of
+    // tracking a transform, so a scale left standing puts the clickable area
+    // out of step with what is drawn for as long as the state lasts.
+    property var proximityCollapse: ({
         out: [[{ property: "scale", to: 1.0, duration: 160, easing: Easing.InQuad },
                 { property: "opacity", to: 1, duration: 160, easing: Easing.InQuad },
                 { property: "rotation", to: 0, duration: 160, easing: Easing.InQuad }]],

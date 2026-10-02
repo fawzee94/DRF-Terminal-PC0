@@ -94,7 +94,7 @@ ModuleBase {
     }
 
     // Named functions rather than bodies inside the key handlers, for the
-    // reason CardBody's scrollBy is one: a check cannot call a handler.
+    // reason ContextualBody's scrollBy is one: a check cannot call a handler.
     function step(delta) {
         selected = Search.stepIndex(selectedRow, rows.length, delta);
     }
@@ -164,7 +164,7 @@ ModuleBase {
             }
 
             Rectangle {
-                id: bar
+                id: anchored
                 anchors { top: parent.top; left: parent.left; right: parent.right }
                 height: takeover.baseSize * 2.4
                 radius: root.theme.radius || 16
@@ -175,7 +175,7 @@ ModuleBase {
                 TextInput {
                     id: field
                     anchors {
-                        left: parent.left; leftMargin: bar.radius * 0.6
+                        left: parent.left; leftMargin: anchored.radius * 0.6
                         right: toggle.left; rightMargin: 6
                         verticalCenter: parent.verticalCenter
                     }
@@ -197,7 +197,7 @@ ModuleBase {
                 Text {
                     id: toggle
                     anchors {
-                        right: parent.right; rightMargin: bar.radius * 0.6
+                        right: parent.right; rightMargin: anchored.radius * 0.6
                         verticalCenter: parent.verticalCenter
                     }
                     text: "󰥩"
@@ -215,7 +215,7 @@ ModuleBase {
             Column {
                 id: results
                 anchors {
-                    top: bar.bottom; topMargin: 8
+                    top: anchored.bottom; topMargin: 8
                     left: parent.left; right: parent.right
                 }
                 spacing: 2

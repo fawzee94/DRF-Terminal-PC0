@@ -1,16 +1,16 @@
 import QtQuick
 
-// Dashboard placement. Deliberately not the auto-flow grid: that one *packs*,
-// computing positions as it goes, while this one *looks up* each card's
+// FullScreen placement. Deliberately not the auto-flow grid: that one *packs*,
+// computing positions as it goes, while this one *looks up* each contextual's
 // already-authored col/row/w/h. Two unrelated algorithms behind one
 // component would only be an internal branch. What they do share is Module
-// Slot itself, via Card Body.
+// Slot itself, via Contextual Body.
 Item {
     id: root
 
     property int columns: 1
     property int rows: 1
-    property var cards: []
+    property var tiles: []
     property var theme: ({})
     property real padding: 0
     property real gap: 0
@@ -27,7 +27,7 @@ Item {
     }
 
     Repeater {
-        model: root.cards
+        model: root.tiles
 
         Rectangle {
             id: cell
@@ -38,20 +38,20 @@ Item {
             width: root.spanSize(modelData.w || 1, root.cellWidth)
             height: root.spanSize(modelData.h || 1, root.cellHeight)
 
-            // A cell carries its own resolved theme slice, so one card can
+            // A cell carries its own resolved theme slice, so one contextual can
             // look different from its neighbours without the grid knowing.
             color: modelData.background || "transparent"
             radius: modelData.radius || 0
             border.width: modelData.borderWidth || 0
             border.color: modelData.accent || "transparent"
 
-            CardBody {
+            ContextualBody {
                 anchors.fill: parent
                 anchors.margins: (cell.modelData.padding || 0) / 2
                 modules: cell.modelData.modules || []
                 moduleOptions: cell.modelData.moduleOptions || ({})
                 theme: Object.assign({}, root.theme, cell.modelData)
-                // Per card, not per dashboard: a cell sizes its own icons.
+                // Per contextual, not per fullScreen: a cell sizes its own icons.
                 iconSize: cell.modelData.iconSize || 0
                 padding: cell.modelData.padding || 0
                 gap: cell.modelData.gap || 0

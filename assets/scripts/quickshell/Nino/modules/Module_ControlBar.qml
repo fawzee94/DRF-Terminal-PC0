@@ -1,7 +1,7 @@
 import QtQuick
 import "../presentation"
 
-// Nino's own chrome — pin, dashboard, close — as an ordinary module rather
+// Nino's own chrome — pin, fullScreen, close — as an ordinary module rather
 // than a separate rendering system. A mode wanting chrome just lists it
 // among its modules; there is nothing else to build. See architecture.md
 // "System: Modes > Chrome".
@@ -20,13 +20,14 @@ ModuleBase {
             view: { type: "string", default: "" },
             buttons: { type: "list", idField: "", entry: { type: "string", default: "" } },
             buttonSize: { type: "number", default: 14, min: 1 },
+            // Plain Unicode, like Volume's: config supplies the Nerd Font set.
             glyphs: {
                 type: "object",
                 fields: {
-                    pin: { type: "string", default: "󰝥" },
-                    dashboard: { type: "string", default: "" },
-                    back: { type: "string", default: "󰔶" },
-                    close: { type: "string", default: "" }
+                    pin: { type: "string", default: "\u{1F4CC}" },
+                    fullScreen: { type: "string", default: "\u{25A6}" },
+                    back: { type: "string", default: "\u{2190}" },
+                    close: { type: "string", default: "\u{2715}" }
                 }
             }
         }
@@ -36,7 +37,7 @@ ModuleBase {
     // pin press and an external caller land on the identical method.
     readonly property var commands: ({
         pin: { command: "setPinned" },
-        dashboard: { command: "switchMode", value: "dashboard" },
+        fullScreen: { command: "switchMode", value: "fullScreen" },
         back: { command: "back" },
         close: { command: "close" }
     })
@@ -64,7 +65,7 @@ ModuleBase {
     })
 
     // What a button press sends. A named function rather than a body inside
-    // the part's action, for the reason CardBody's scrollBy is one: a check
+    // the part's action, for the reason ContextualBody's scrollBy is one: a check
     // cannot call a handler. Returns the message so a check can read it even
     // when nothing is listening.
     function press(button, id) {

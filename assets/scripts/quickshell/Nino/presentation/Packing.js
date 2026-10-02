@@ -1,10 +1,10 @@
 // Pure packing arithmetic, shared by the auto-flow grid (fixed ceiling) and
-// the card body (organic height) — they differ in how they treat height, not
+// the contextual body (organic height) — they differ in how they treat height, not
 // in how they pack width. No imports, no QML.
 
 // Packs items left to right in order, wrapping when the next one will not
 // fit the remaining width. Each item is { width, solo }; an item marked
-// solo claims a row to itself, which is how a card keeps anything that is
+// solo claims a row to itself, which is how a contextual keeps anything that is
 // not an icon out of the flow. Returns rows of
 // { items: [{ index, width }], usedWidth }.
 //
@@ -48,7 +48,7 @@ function packRows(items, availableWidth, gap) {
 }
 
 // Stacks packed rows from the top, each row as tall as its tallest item.
-// Every host measures this way: a card grows to the total, a fixed-ceiling
+// Every host measures this way: a contextual grows to the total, a fixed-ceiling
 // host keeps the rows whose bottom clears it. Uniform rows were the
 // alternative and they were taller than what sat in them, which turned their
 // own slack into apparent gap. Returns { rows: [{ y, height }], totalHeight }.

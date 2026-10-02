@@ -57,7 +57,7 @@ $character"""
 	format				='[󰜷$duration](#5e5c64)'
 #	╰────────────────────────────────────────────────────────────────╯
 [nix_shell]
-	format				="""[[$symbol-$name $state](bg:#5e5c64 fg:#87af5f)](bg:#282828 fg:#5e5c64)"""
+	format				="""[[$symbol-$name $state](bg:#5e5c64 fg:#87af5f)](bg:#282828 fg:#5e5c64)"""
 	style				="bg:#5e5c64"
 	symbol				="(bg:#5e5c64 fg:#87af5f)"
 	impure_msg			="impure"
@@ -65,11 +65,31 @@ $character"""
 	unknown_msg			="?"
 #	╰────────────────────────────────────────────────────────────────╯
 [git_branch]
-	format				="""[[$symbol $branch(:$remote_branch)](bg:#5e5c64 fg:#87af5f)](bg:#282828 fg:#5e5c64)"""
+	format				="""[[ ](bg:#5e5c64 fg:#eeeeee)[$symbol ](bg:#5e5c64 fg:#87af5f)[$branch(:$remote_branch)](bg:#5e5c64 fg:#eeeeee)](bg:#282828 fg:#5e5c64)"""
 	style				="bg:#5e5c64"
-	symbol				="(bg:#5e5c64 fg:#87af5f)"
+	symbol				="(bg:#5e5c64 fg:#87af5f)"
 #	╰────────────────────────────────────────────────────────────────╯
 [git_status]
 	format				='([$all_status$ahead_behind]($style))'
 	style				="fg:#a36f3b"
+	conflicted			="="
+	ahead				="󰜷"
+	behind				="󰜮"
+	diverged			="󰘖"
+	up_to_date			="󰊇"
+	untracked			=""
+	stashed				="󰇁"
+	modified			="󱈸"
+	staged				="󱇬"
+	renamed				=""
+	deleted				="󱂥"
+	typechanged			=""
+	worktree_added		=""
+	worktree_deleted	=""
+	worktree_modified	=""
+	worktree_typechanged=""
+	index_added			=""
+	index_deleted		=""
+	index_modified		=""
+	index_typechanged	=""
 #	╰────────────────────────────────────────────────────────────────╯

@@ -4,6 +4,25 @@
 # a torrent daemon, and a couple of niri-specific extras that aren't on
 # the desktop yet.
 { config, pkgs, unstable, ... }:
+let
+  # llama.cpp built for this machine's GPU and nothing else. The GTX 1050 is
+  # Pascal (compute capability 6.1), and nixpkgs' default CUDA target list
+  # starts at 7.5 - the stock llama-cpp-cuda compiles nine architectures over
+  # several hours and emits no code this card can run. The arch list comes
+  # from cudaPackages.flags (pkgs/by-name/ll/llama-cpp/package.nix), which
+  # .override cannot reach, hence a scoped nixpkgs import instead.
+  #
+  # This attribute is .llama-cpp, not .llama-cpp-cuda: cudaSupport is already
+  # on globally inside this import, so the base attribute is the CUDA build.
+  llamaCppPascal = (import unstable.path {
+    system = "x86_64-linux";
+    config = {
+      allowUnfree = true;
+      cudaSupport = true;
+      cudaCapabilities = [ "6.1" ];
+    };
+  }).llama-cpp;
+in
 {
   networking.hostName = "DRF-terminal-LT0";
 
@@ -49,7 +68,16 @@
 
   # ---- Machine exclusive packages --------------------------------------
   environment.systemPackages = with pkgs; [
-    
+    # ---- Local LLM ----
+    # Runs Qwen3.6-35B-A3B with its MoE experts offloaded to system RAM
+    # (--n-cpu-moe), keeping attention and KV cache on the 3 GB card. This is
+    # the machine with 31 GB of RAM, which is what makes a 35B model possible
+    # here and not on the desktop. Built locally, see llamaCppPascal above.
+    llamaCppPascal
+    # Coding agent, drives llama-server's OpenAI-compatible endpoint.
+    # unstable rather than stable (1.18.31 vs 1.15.10) - releases land every
+    # few days. Chosen over aider, which has not moved since 2026-05-22.
+    unstable.opencode
   ];
 
 

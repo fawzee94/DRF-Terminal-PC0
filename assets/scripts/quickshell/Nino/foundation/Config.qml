@@ -6,7 +6,7 @@ import Quickshell.Io
 import "ConfigParser.js" as ConfigParser
 import "SchemaValidator.js" as SchemaValidator
 
-// The live-reloading config tree. Knows nothing about pills or modules —
+// The live-reloading config tree. Knows nothing about modes or modules —
 // that lives entirely in config.schema.json. Why `data` is assigned rather
 // than bound, why `configText` is its own property, and why parsing is
 // wrapped rather than left to the binding: architecture.md "Config Engine >

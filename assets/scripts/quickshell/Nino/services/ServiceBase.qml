@@ -4,7 +4,7 @@ import QtQuick
 // poll(); this builds continuous, ref-counted consumption on top of it and
 // drops to fully idle at zero. See architecture.md "System: Service Base".
 //
-// One-shot consumption (queryOnce) is deliberately absent until Dashboard
+// One-shot consumption (queryOnce) is deliberately absent until FullScreen
 // needs it — building it ahead of its only caller produced a contract that
 // had to be widened once and a bug nothing could catch.
 //
@@ -21,7 +21,7 @@ Item {
     property int refCount: 0
     property bool pollFailing: false
 
-    // Callbacks waiting on one fresh reading. Its only caller is Dashboard
+    // Callbacks waiting on one fresh reading. Its only caller is FullScreen
     // resolving which screen it opened on — a question that must not start
     // continuous polling nobody needs.
     property var pendingOnce: []

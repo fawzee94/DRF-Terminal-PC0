@@ -1,7 +1,7 @@
 // Validates parsed config against a schema tree. Four node kinds — leaf,
-// object, list, opaque — plus `inherits` on an object node. Warns and falls
-// back rather than throwing; see architecture.md "Config Engine > Error
-// handling" for why that is right here and wrong elsewhere.
+// object, list, opaque — plus `inherits` and `includes` on an object node.
+// Warns and falls back rather than throwing; see architecture.md "Config
+// Engine > Error handling" for why that is right here and wrong elsewhere.
 
 const LEAF_TYPES = ['number', 'string', 'bool', 'color', 'enum'];
 
@@ -150,6 +150,22 @@ function applyInherited(keys, scope, source, path, root, target) {
   }
 }
 
+// A shape is a named group of field declarations, held once at the top level
+// and named by every node that carries it. `inherits` does this for a single
+// value; this does it for a block of structure.
+function includedFields(schemaNode, root, path) {
+  const shapes = root.schema.shapes || {};
+  const included = {};
+  for (const name of schemaNode.includes || []) {
+    if (!shapes[name]) {
+      warn(path, `includes "${name}", which is not a declared shape`);
+      continue;
+    }
+    Object.assign(included, shapes[name]);
+  }
+  return included;
+}
+
 // A key the schema doesn't declare is dropped either way, but how differs: an
 // `additional` rule means a deliberately open shape (moduleOptions), so it's
 // kept; without one the key is most likely a typo, so it says so.
@@ -166,7 +182,9 @@ function applyAdditionalFields(additionalSchema, declared, source, path, root, t
 
 function validateObject(schemaNode, rawValue, path, root) {
   const source = coerceToObject(dereference(rawValue, path, root), path);
-  const fields = schemaNode.fields || {};
+  // Node-local fields last: a node that carries a shape can still restate one
+  // of its keys.
+  const fields = Object.assign(includedFields(schemaNode, root, path), schemaNode.fields);
   const inherits = schemaNode.inherits || [];
   const fromInstance = schemaNode.inheritsFromInstance || [];
   // Identity, not structure: only the outermost node accumulates straight

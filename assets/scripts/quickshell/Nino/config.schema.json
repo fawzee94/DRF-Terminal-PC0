@@ -6,6 +6,40 @@
 # restating it per mode. See architecture.md "Schema vocabulary".
 {
   "type": "object",
+
+  # A shape is a group of field declarations held once here and named by every
+  # node that carries it, the way "inherits" below declares a value once. Every
+  # mode that hosts several modules is the same shape of thing; it used to say
+  # so four times over.
+  "shapes": {
+    "moduleHost": {
+      "moduleAlignment": {
+        "type": "object",
+        "fields": {
+          "horizontal": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
+          "vertical": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" }
+        }
+      },
+      "modules": {
+        "type": "list",
+        "idField": "id",
+        "entry": {
+          "type": "object",
+          "fields": {
+            "id": { "type": "string", "default": "" },
+            "module": { "type": "string", "default": "" },
+            "moduleOptions": { "type": "opaque" }
+          }
+        }
+      },
+      "moduleOptions": {
+        "type": "object",
+        "fields": {},
+        "additional": { "type": "opaque" }
+      }
+    }
+  },
+
   "fields": {
     "background": { "type": "color", "default": "#66282828" },
     "radius": { "type": "number", "default": 16, "min": 0 },
@@ -32,8 +66,15 @@
         "scope": "instance",
         "fields": {
           "id": { "type": "string", "default": "" },
-          "restingMode": { "type": "enum", "values": ["dot", "pill", "bar", "card", "dashboard"], "default": "dot" },
+          "restingMode": { "type": "enum", "values": ["leashed", "dynamic", "anchored", "contextual", "fullScreen"], "default": "leashed" },
           "animationSet": { "type": "string", "default": "Default" },
+
+          # Which layer-shell layer this Nino's surfaces sit on. mango maps
+          # "overlay" to its second-highest scene layer, which clears the
+          # special-tag band a scratchpad lives in — and fullscreen with it;
+          # "top" is under all three, and nothing reaches in between
+          # (lore.md L57).
+          "layer": { "type": "enum", "values": ["top", "overlay"], "default": "top" },
 
           # How this Nino moves, declared once. A mode overrides only what it
           # wants different, and a mode that does not move names none of them.
@@ -58,16 +99,16 @@
           # instance declares is cycled, in the order they appear here.
           "cycleModes": { "type": "list", "idField": "", "entry": { "type": "string", "default": "" } },
 
-          "dot": {
+          "leashed": {
             "type": "object",
-            # No gap: Dot holds a single module, so there is nothing to space.
+            # No gap: Leashed holds a single module, so there is nothing to space.
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "font", "fontSize"],
             "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs"],
             "fields": {
               "draggable": { "type": "bool", "default": false },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "fixed" },
-              "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "single" },
+              "contentShape": { "type": "enum", "values": ["single", "autoflow", "contextualBody", "fullScreenGrid"], "default": "single" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "cursor" },
               "size": { "type": "number", "default": 10, "min": 0 },
               "module": { "type": "string", "default": "" },
@@ -75,63 +116,40 @@
             }
           },
 
-          "pill": {
+          "dynamic": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
             "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "revealDistance", "collapseDistance"],
+            "includes": ["moduleHost"],
             "fields": {
               "draggable": { "type": "bool", "default": true },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "fixed" },
               "iconSize": { "type": "number", "default": 24, "min": 1 },
-              "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "autoflow" },
+              "contentShape": { "type": "enum", "values": ["single", "autoflow", "contextualBody", "fullScreenGrid"], "default": "autoflow" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "cursor" },
               "width": { "type": "number", "default": 140, "min": 0 },
               "height": { "type": "number", "default": 30, "min": 0 },
               # 0 on an axis means it does not shrink on that one.
               # revealDistance is what drives them, and on a cursor mode only
-              # a parked one can show it: a following pill holds the cursor at
+              # a parked one can show it: a following dynamic holds the cursor at
               # targetDistance forever.
               "collapsedWidth": { "type": "number", "default": 0, "min": 0 },
-              "collapsedHeight": { "type": "number", "default": 0, "min": 0 },
-
-              "moduleAlignment": {
-                "type": "object",
-                "fields": {
-                  "horizontal": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
-                  "vertical": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" }
-                }
-              },
-              "modules": {
-                "type": "list",
-                "idField": "id",
-                "entry": {
-                  "type": "object",
-                  "fields": {
-                    "id": { "type": "string", "default": "" },
-                    "module": { "type": "string", "default": "" },
-              "moduleOptions": { "type": "opaque" }
-                  }
-                }
-              },
-              "moduleOptions": {
-                "type": "object",
-                "fields": {},
-                "additional": { "type": "opaque" }
-              }
+              "collapsedHeight": { "type": "number", "default": 0, "min": 0 }
             }
           },
 
-          "bar": {
+          "anchored": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
             "inheritsFromInstance": ["deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "revealDistance"],
+            "includes": ["moduleHost"],
             "fields": {
               "draggable": { "type": "bool", "default": false },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "fixed" },
               "iconSize": { "type": "number", "default": 24, "min": 1 },
-              "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "autoflow" },
+              "contentShape": { "type": "enum", "values": ["single", "autoflow", "contextualBody", "fullScreenGrid"], "default": "autoflow" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "anchored" },
               "screen": { "type": "string", "default": "current" },
               "edge": { "type": "enum", "values": ["top", "bottom", "left", "right"], "default": "top" },
@@ -140,129 +158,56 @@
               "width": { "type": "number", "default": 300, "min": 0 },
               "height": { "type": "number", "default": 30, "min": 0 },
               "collapsedWidth": { "type": "number", "default": 0, "min": 0 },
-              "collapsedHeight": { "type": "number", "default": 30, "min": 0 },
-
-              "moduleAlignment": {
-                "type": "object",
-                "fields": {
-                  "horizontal": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
-                  "vertical": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" }
-                }
-              },
-              "modules": {
-                "type": "list",
-                "idField": "id",
-                "entry": {
-                  "type": "object",
-                  "fields": {
-                    "id": { "type": "string", "default": "" },
-                    "module": { "type": "string", "default": "" },
-              "moduleOptions": { "type": "opaque" }
-                  }
-                }
-              },
-              "moduleOptions": {
-                "type": "object",
-                "fields": {},
-                "additional": { "type": "opaque" }
-              }
+              "collapsedHeight": { "type": "number", "default": 30, "min": 0 }
             }
           },
 
-          "card": {
+          "contextual": {
             "type": "object",
             "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
             "inheritsFromInstance": ["defaultAngle", "angleDegrees", "targetDistance", "deadzone", "delayMs", "speed", "easeMs", "minMoveMs", "collapseDistance"],
+            "includes": ["moduleHost"],
             "fields": {
               "draggable": { "type": "bool", "default": true },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "fixed" },
               "iconSize": { "type": "number", "default": 24, "min": 1 },
-              "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "cardBody" },
+              "contentShape": { "type": "enum", "values": ["single", "autoflow", "contextualBody", "fullScreenGrid"], "default": "contextualBody" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "inherit" },
               "width": { "type": "number", "default": 160, "min": 0 },
-              "height": { "type": "number", "default": 230, "min": 0 },
-
-              "moduleAlignment": {
-                "type": "object",
-                "fields": {
-                  "horizontal": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
-                  "vertical": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" }
-                }
-              },
-              "modules": {
-                "type": "list",
-                "idField": "id",
-                "entry": {
-                  "type": "object",
-                  "fields": {
-                    "id": { "type": "string", "default": "" },
-                    "module": { "type": "string", "default": "" },
-              "moduleOptions": { "type": "opaque" }
-                  }
-                }
-              },
-              "moduleOptions": {
-                "type": "object",
-                "fields": {},
-                "additional": { "type": "opaque" }
-              }
+              "height": { "type": "number", "default": 230, "min": 0 }
             }
           },
 
-          "dashboard": {
+          "fullScreen": {
             "type": "object",
-            # No radius and no borderWidth: Dashboard is the screen, and a
-            # screen has no corners to round or edge to draw. Its cards keep
+            # No radius and no borderWidth: FullScreen is the screen, and a
+            # screen has no corners to round or edge to draw. Its tiles keep
             # both, inherited independently below.
             "inherits": ["background", "accent", "text", "padding", "gap", "font", "fontSize"],
             "fields": {
               "draggable": { "type": "bool", "default": false },
               "clicks": { "type": "opaque" },
               "sizing": { "type": "enum", "values": ["fixed", "screen"], "default": "screen" },
-              "contentShape": { "type": "enum", "values": ["single", "autoflow", "cardBody", "dashboardGrid"], "default": "dashboardGrid" },
+              "contentShape": { "type": "enum", "values": ["single", "autoflow", "contextualBody", "fullScreenGrid"], "default": "fullScreenGrid" },
               "positioning": { "type": "enum", "values": ["cursor", "anchored", "inherit"], "default": "anchored" },
               "columns": { "type": "number", "default": 7, "min": 1 },
               "rows": { "type": "number", "default": 6, "min": 1 },
 
-              "cards": {
+              "tiles": {
                 "type": "list",
                 "idField": "id",
                 "entry": {
                   "type": "object",
                   "inherits": ["background", "radius", "borderWidth", "accent", "text", "padding", "gap", "font", "fontSize"],
+                  "includes": ["moduleHost"],
                   "fields": {
                     "id": { "type": "string", "default": "" },
                     "col": { "type": "number", "default": 0, "min": 0 },
                     "row": { "type": "number", "default": 0, "min": 0 },
                     "w": { "type": "number", "default": 1, "min": 1 },
                     "h": { "type": "number", "default": 1, "min": 1 },
-                    "iconSize": { "type": "number", "default": 24, "min": 1 },
-
-                    "moduleAlignment": {
-                      "type": "object",
-                      "fields": {
-                        "horizontal": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" },
-                        "vertical": { "type": "enum", "values": ["center", "left", "right", "top", "bottom"], "default": "center" }
-                      }
-                    },
-                    "modules": {
-                      "type": "list",
-                      "idField": "id",
-                      "entry": {
-                        "type": "object",
-                        "fields": {
-                          "id": { "type": "string", "default": "" },
-                          "module": { "type": "string", "default": "" },
-              "moduleOptions": { "type": "opaque" }
-                        }
-                      }
-                    },
-                    "moduleOptions": {
-                      "type": "object",
-                      "fields": {},
-                      "additional": { "type": "opaque" }
-                    }
+                    "iconSize": { "type": "number", "default": 24, "min": 1 }
                   }
                 }
               }
