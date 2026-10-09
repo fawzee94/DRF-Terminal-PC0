@@ -113,6 +113,8 @@
     # ---- Workstation ----
     # Drawing board
     drawy
+    # Note
+    unstable.obsidian
     # Office
     onlyoffice-desktopeditors
     # Digital drawing
@@ -121,6 +123,10 @@
     unstable.godot
     # Video editing
     video-trimmer
+    
+    # ---- AI ----
+    unstable.claude-code
+    unstable.opencode
 
     # ---- Other ----
     # Torrent client

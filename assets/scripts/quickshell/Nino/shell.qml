@@ -71,6 +71,7 @@ ShellRoot {
                 function cycleModes(): void { ninoPose.cycleModes(); }
                 function takeover(module: string): void { ninoPose.takeover(module); }
                 function toggleFollow(): void { ninoPose.toggleFollow(); }
+                function summon(): void { ninoPose.summon(); }
                 function toggleAngle(): void { ninoPose.toggleAngle(); }
                 function collapse(): void { ninoPose.collapse(); }
                 function back(): void { ninoPose.back(); }

@@ -31,20 +31,10 @@
 
   hardware.opentabletdriver.enable = true;
   
-  # 3. Enable Ollama Systemd Service with CUDA GPU Acceleration
-  services.ollama = {
-    enable = true;
-    package = pkgs.ollama-cuda; # Forces CUDA build instead of CPU
-  };
-  
   # ---- Machine exclusive packages --------------------------------------
   environment.systemPackages = with pkgs; [
     # Font editor
     fontforge-gtk
-    # AI
-    aider-chat
-    
-    claude-code
     
 
     # ---- Runtimes ----

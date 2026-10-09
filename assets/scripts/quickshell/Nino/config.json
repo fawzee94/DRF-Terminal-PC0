@@ -31,25 +31,25 @@
       "angleDegrees": 0,
       "deadzone": 23,
       "delayMs": 0,
-      "speed": 1.5,
+      "speed": 1.7,
       "easeMs": 2,
-      "minMoveMs": 50,
+      "minMoveMs": 100,
       "animationSet": "Default",
       "cycleModes": ["leashed", "anchored"],
 
       "leashed": {
         "targetDistance": 23,
         "size":10,
-        "module": null,
+        "module": "Launcher",
         "clicks": {
           "left": { "command": "switchMode", "value": "dynamic" },
           "right": { "command": "switchMode", "value": "contextual" },
           "middle": "toggleFollow"
         },
         "moduleOptions": {
-          "timeFormat": "hh:mm",
-          # A bare name is the whole command; the long form carries a value.
-          "clicks": { "left": "copyDate", "right": { "command": "takeover" } }
+          "view": "icon",
+          "icon": "",
+          "clicks": { "left": { "command": "takeover", "value": "pillLauncher" } }
         },
 
         # Inherits from the top-level theme. Override any of:
@@ -59,8 +59,9 @@
       },
 
       "dynamic": {
-        "targetDistance": 35,
-        "deadzone": 35,
+        "targetDistance": 60,
+        "deadzone": 60,
+        "speed": 0,
 
         # Shrink-in-place, off until revealDistance is set. 0 on an axis means
         # it does not shrink on that one. Only a *parked* dynamic can show it —
@@ -113,7 +114,7 @@
       },
 
       "anchored": {
-        "screen": "DP-1",
+        "screen": "current",
         "edge": "top",
         "edgeMargin": 5,
         "alignment": "center",

@@ -68,16 +68,6 @@ in
 
   # ---- Machine exclusive packages --------------------------------------
   environment.systemPackages = with pkgs; [
-    # ---- Local LLM ----
-    # Runs Qwen3.6-35B-A3B with its MoE experts offloaded to system RAM
-    # (--n-cpu-moe), keeping attention and KV cache on the 3 GB card. This is
-    # the machine with 31 GB of RAM, which is what makes a 35B model possible
-    # here and not on the desktop. Built locally, see llamaCppPascal above.
-    llamaCppPascal
-    # Coding agent, drives llama-server's OpenAI-compatible endpoint.
-    # unstable rather than stable (1.18.31 vs 1.15.10) - releases land every
-    # few days. Chosen over aider, which has not moved since 2026-05-22.
-    unstable.opencode
   ];
 
 

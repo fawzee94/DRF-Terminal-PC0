@@ -430,6 +430,30 @@ QtObject {
         following = !following;
     }
 
+    // Called over to where the pointer is, which retarget() will not do:
+    // parked it declines outright, and following it holds Nino a
+    // targetDistance away. Landing centred on the cursor is the drop point
+    // of a drag reached without one, and it stays for the same reason a
+    // drop does — the gap reads 0, so the gate is shut until the pointer
+    // leaves. Following is left alone: the ask is to be fetched, not to be
+    // set going again.
+    function summon() {
+        // The gate parked uses, so a contextual is summonable or not by
+        // what it inherited rather than by its name.
+        if (positioning !== "cursor") {
+            console.warn(`[Pose] summon: mode "${activeMode}" is not positioned `
+                + `by the cursor`);
+            return;
+        }
+        if (!cursor) return;
+        // A delayed acceptance still pending would land after this one.
+        delayTimer.stop();
+        // The committed centre, not x/y: position derives from this one
+        // thing, and a write to x/y is undone by the next applyPosition.
+        acceptedTarget = { x: cursor.x, y: cursor.y };
+        applyPosition();
+    }
+
     // Back to the perch. A Nino that has not rested anywhere yet has no
     // perch to return to, so close() answers.
     function collapse() {
